@@ -1,36 +1,27 @@
-# jaskoracing
+**Jasko Racing**
+- Leonel Cuello
+- Lautaro Griggio
+- Jesús Fernández
+###### Sos un piloto llamado Jasko P. Balini fue invitado VIP a participar de unas de las carreras más prestigiosas, privilegiadas y extremadamente mortales del mundo luego de demostrar su habilidad en las carreras callejeras. La idea es que compitas por el podio contra 8 competidores en una pista y volverte de los pilotos más habilidosos que el mundo haya visto nunca. En distintas categorías como: Rally, F1 y Carrera Estándar.
+## Tecnologias usadas:
+- LibGDX
+### Plataformas usadas:
+- HTML
+- Escritorio
+## Instrucciones para ejecutar el juego
+1. Descargar el juego desde el repositorio orginal
+2. Guardar los archivos en una carpeta del nombre que quieras
+3. Crear otra carpeta aparte para abrir como workspace del Eclipse
+4. En eclipse importar proyecto - Gradle - Importar Proyecto existente de Gradle
+5. Una vez importado, abrir una de las 3 carpetas llamada jaskoracing-lwgj3
+6. Navegar por las carpetas partiendo desde el src hasta llegar al archivo Lwjg3Launcher.java
+![](https://i.ibb.co/nq9B2S9m/bgdf.png)
+7. Doble click al archivo, y en la barra superior ejecutar el juego
+![](https://i.ibb.co/Kp8KXHng/dwe.png)
+### Y listo ya estaras ejecutando el juego!
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+**Enlace a la Wiki del Proyecto (Propuesta Detallada):**
+[Mira la Propuesta Completa del Proyecto
+aquí](https://github.com/skinnyleonard/jaskoracing/wiki/Propuesta-del-Proyecto-%E2%80%90-Jasko-Racing#32---vista-y-aspecto-gr%C3%A1fico)
 
-This project was generated with a template including simple application launchers and a main class extending `Game` that sets the first screen.
-
-## Platforms
-
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
-- `html`: Web platform using GWT and WebGL. Supports only Java projects.
-
-## Gradle
-
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
-
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `html:dist`: compiles GWT sources. The compiled application can be found at `html/build/dist`: you can use any HTTP server to deploy it.
-- `html:superDev`: compiles GWT sources and runs the application in SuperDev mode. It will be available at [localhost:8080/html](http://localhost:8080/html). Use only during development.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
-
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+Estado actual del proyecto: "Configuración inicial y estructura del proyecto"
