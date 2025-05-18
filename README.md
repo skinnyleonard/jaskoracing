@@ -22,6 +22,6 @@
 
 **Enlace a la Wiki del Proyecto (Propuesta Detallada):**
 [Mira la Propuesta Completa del Proyecto
-aquí](https://github.com/skinnyleonard/jaskoracing/wiki/Propuesta-del-Proyecto-%E2%80%90-Jasko-Racing#32---vista-y-aspecto-gr%C3%A1fico)
+aquí](https://github.com/skinnyleonard/jaskoracing/wiki/Propuesta-del-Proyecto-%E2%80%90-Jasko-Racing)
 
 Estado actual del proyecto: "Configuración inicial y estructura del proyecto"
