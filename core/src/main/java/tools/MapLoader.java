@@ -12,8 +12,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import screens.Constants;
 
-import java.awt.*;
-
 public class MapLoader implements Disposable {
     private static final String MAP_WALL = "wall";
     private static final String MAP_PLAYER = "player";
@@ -27,13 +25,12 @@ public class MapLoader implements Disposable {
         mMap = new TmxMapLoader().load(Constants.MAP_NAME);
 
         final Array<RectangleMapObject> walls = mMap.getLayers().get(MAP_WALL).getObjects().getByType(RectangleMapObject.class);
-        for (RectangleMapObject rObject : walls) {
+        for (RectangleMapObject rObject : new Array.ArrayIterator<RectangleMapObject>(walls)) {
             Rectangle rectangle = rObject.getRectangle();
             ShapeFactory.createRectangle(
                 new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2),
                 new Vector2(rectangle.getWidth() / 2, rectangle.getHeight() / 2),
-                BodyDef.BodyType.StaticBody, mWorld, 1f
-            );
+                BodyDef.BodyType.StaticBody, mWorld, 1f, false);
         }
     }
 
@@ -42,8 +39,7 @@ public class MapLoader implements Disposable {
         return ShapeFactory.createRectangle(
             new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2),
             new Vector2(rectangle.getWidth() / 2, rectangle.getHeight() / 2),
-            BodyDef.BodyType.DynamicBody, mWorld, 0.4f
-        );
+            BodyDef.BodyType.DynamicBody, mWorld, 0.4f, false);
     }
 
     @Override
