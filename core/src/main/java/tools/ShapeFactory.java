@@ -1,11 +1,8 @@
 package tools;
 
+import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 
 import screens.Constants;
 
@@ -30,4 +27,43 @@ public class ShapeFactory {
 
 		return body;
 	}
+
+    public static Body createPolyline(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
+        final BodyDef bdef = new BodyDef();
+        final Body body = world.createBody(bdef);
+
+        final ChainShape chain = new ChainShape();
+        chain.createChain(worldVertices);
+
+        bdef.type = type;
+
+        final FixtureDef fdef = new FixtureDef();
+        fdef.shape = chain;
+        fdef.density = density;
+        fdef.isSensor = sensor;
+
+        body.createFixture(fdef);
+        chain.dispose();
+
+        return body;
+    }
+
+    public static Body createPolygon(float[] vertices, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
+        final BodyDef bdef = new BodyDef();
+        final Body body = world.createBody(bdef);
+
+        final PolygonShape shape = new PolygonShape();
+        shape.set(vertices);
+        bdef.type = type;
+
+        final FixtureDef fdef = new FixtureDef();
+        fdef.shape = shape;
+        fdef.density = density;
+        fdef.isSensor = sensor;
+
+        body.createFixture(fdef);
+        shape.dispose();
+
+        return body;
+    }
 }
