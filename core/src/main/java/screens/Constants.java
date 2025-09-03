@@ -9,5 +9,5 @@ public class Constants {
 	public static final float DEFUALT_ZOOM = 6f;
 	public static final float PPM = 50.0f;
 
-    public static final String MAP_NAME = "new_map.tmx";
+    public static final String MAP_NAME = "mapa_demo_final.tmx";
 }

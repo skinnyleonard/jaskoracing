@@ -65,7 +65,7 @@ public abstract class BodyHolder {
         mBody.setLinearVelocity(mForwardSpeed);
     }
 
-    private Vector2 getLateralVelocity() {
+    protected Vector2 getLateralVelocity() {
         Vector2 currentNormal = mBody.getWorldVector(new Vector2(1, 0));
         float dotProduct = currentNormal.dot(mBody.getLinearVelocity());
         return multiply(dotProduct, currentNormal);

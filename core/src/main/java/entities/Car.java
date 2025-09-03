@@ -37,16 +37,16 @@ public class Car extends BodyHolder {
     private float mCurrentWheelAngle = 0;
     private final Array<Wheel> mAllWheels = new Array<Wheel>();
     private final Array<Wheel> mRevolvingWheels = new Array<Wheel>();
-    private float mDrift;
+    private float drift;
     private float mCurrentMaxSpeed;
     private final float mRegularMaxSpeed;
-    private float mAceleration;
+    private float aceleration;
 
     public Car(final float maxSpeed, final float drift, final float aceleration, final MapLoader  mapLoader, int wheelDrive, World world) {
         super(mapLoader.getPlayers());
         this.mRegularMaxSpeed = maxSpeed;
-        this.mDrift = drift;
-        this.mAceleration = aceleration;
+        this.drift = drift;
+        this.aceleration = aceleration;
         getBody().setLinearDamping(LINEAR_DAMPING);
         getBody().getFixtureList().get(0).setRestitution(RESTITUTION);
         createWheels(world, wheelDrive);
@@ -98,7 +98,7 @@ public class Car extends BodyHolder {
             if(i < 2) {
                 mRevolvingWheels.add(wheel);
             }
-            wheel.setDrift(mDrift);
+            wheel.setDrift(this.drift);
         }
     }
 
@@ -124,14 +124,14 @@ public class Car extends BodyHolder {
         }
 
         if(mDriveDirection == DRIVE_DIRECTION_FORWARD) {
-            baseVector.set(0, mAceleration);
+            baseVector.set(0, this.aceleration);
         } else if(mDriveDirection == DRIVE_DIRECTION_BACKWARD) {
             if(direction() == DIRECTION_BACKWARD) {
-                baseVector.set(0, -mAceleration * 0.7f);
+                baseVector.set(0, -this.aceleration * 0.7f);
             } else if (direction() == DIRECTION_FORWARD) {
-                baseVector.set(0, -mAceleration * 1.3f);
+                baseVector.set(0, -this.aceleration * 1.3f);
             } else {
-                baseVector.set(0, -mAceleration);
+                baseVector.set(0, -this.aceleration);
             }
         }
 
@@ -158,8 +158,15 @@ public class Car extends BodyHolder {
         this.mTurnDirection = turnDirection;
     }
 
+//    private void getData() {
+//        if(super.getLateralVelocity().len() > 10) {
+//            System.out.println(super.getLateralVelocity().len());
+//        }
+//    }
+
     @Override
     public void update(float delta) {
+//        getData();
         super.update(delta);
         processInput();
         for(Wheel wheel : new Array.ArrayIterator<Wheel>(mAllWheels)) {
