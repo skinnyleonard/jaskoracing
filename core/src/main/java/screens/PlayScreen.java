@@ -13,9 +13,13 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import entities.Car;
+import io.github.jasko.Main;
+import tools.HUD;
 import tools.ImageRenderer;
 import tools.MapLoader;
 import static entities.Car.*;
+
+import java.security.PublicKey;
 
 public class PlayScreen implements Screen {
 
@@ -26,6 +30,8 @@ public class PlayScreen implements Screen {
     private final Viewport viewport;
     private final Car player;
     private final MapLoader mapLoader;
+    private static Main game;
+    private HUD hud;
 
     public PlayScreen() {
         batch = new SpriteBatch();
@@ -33,6 +39,7 @@ public class PlayScreen implements Screen {
         b2dr = new Box2DDebugRenderer();
         camera = new OrthographicCamera();
         camera.zoom = Constants.DEFUALT_ZOOM;
+        hud = new HUD(batch);
         viewport = new ExtendViewport(640 / Constants.PPM, 480 / Constants.PPM, camera);
         mapLoader = new MapLoader(world);
         player = new Car(35.0f, 0.8f, 60, mapLoader, DRIVE_4WD, world);
@@ -50,6 +57,7 @@ public class PlayScreen implements Screen {
         handleInput();
         update(delta);
         draw();
+        hud.stage.draw();
     }
 
     private void handleInput() {

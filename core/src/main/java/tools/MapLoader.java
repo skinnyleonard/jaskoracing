@@ -87,6 +87,7 @@ public class MapLoader implements Disposable {
 
     public Body getPlayers() {
         final Rectangle rectangle = mMap.getLayers().get(MAP_PLAYER).getObjects().getByType(RectangleMapObject.class).get(0).getRectangle();
+        System.out.println(rectangle.getWidth() + "x" + rectangle.getHeight());
         return ShapeFactory.createRectangle(
             new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2),
             new Vector2(rectangle.getWidth() / 2, rectangle.getHeight() / 2),

@@ -10,4 +10,7 @@ public class Constants {
 	public static final float PPM = 50.0f;
 
     public static final String MAP_NAME = "mapa_demo_final.tmx";
+
+    public static final String FONDOMENU = "fondos/fondoJuego.png";
+    public static final String FUENTEMENU = "fuentes/sewer.ttf";
 }
