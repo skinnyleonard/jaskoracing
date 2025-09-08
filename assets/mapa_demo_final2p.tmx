@@ -47,4 +47,7 @@
  <objectgroup id="2" name="player">
   <object id="166" x="652" y="2000" width="128" height="256" rotation="-22"/>
  </objectgroup>
+ <objectgroup id="15" name="player2">
+  <object id="219" x="916" y="1868" width="128" height="256" rotation="-22"/>
+ </objectgroup>
 </map>
