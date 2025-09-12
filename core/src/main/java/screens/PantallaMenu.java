@@ -46,7 +46,7 @@ public class PantallaMenu implements Screen {
         int startY = 400;
         int gap = 90;
         for (int i = 0; i < opciones.length; i++) {
-            opciones[i] = new Texto(Constants.FUENTEMENU, 80, Color.WHITE);
+            opciones[i] = new Texto(Constants.FUENTEMENU, 50, Color.WHITE);
             opciones[i].setTexto(textos[i]);
             opciones[i].setPosition(Gdx.graphics.getHeight()/2, startY - (i * gap));
         }
