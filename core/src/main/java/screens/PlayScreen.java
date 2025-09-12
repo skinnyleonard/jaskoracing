@@ -18,6 +18,7 @@ import tools.HUD;
 import tools.ImageRenderer;
 import tools.MapLoader;
 import static entities.Car.*;
+import tools.WorldContactListener;
 
 import java.security.PublicKey;
 
@@ -43,6 +44,7 @@ public class PlayScreen implements Screen {
         viewport = new ExtendViewport(640 / Constants.PPM, 480 / Constants.PPM, camera);
         mapLoader = new MapLoader(world);
         player = new Car(35.0f, 0.8f, 60, mapLoader, DRIVE_4WD, world);
+        world.setContactListener(new WorldContactListener());
     }
 
     @Override
