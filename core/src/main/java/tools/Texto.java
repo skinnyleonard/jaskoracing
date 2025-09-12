@@ -17,7 +17,7 @@ public class Texto {
     GlyphLayout layout;
 
     public Texto(String rutaFuente, int dimension,Color color) {
-        generator = new FreeTypeFontGenerator(Gdx.files.internal("fuentes/sewer.ttf"));
+        generator = new FreeTypeFontGenerator(Gdx.files.internal(rutaFuente));
         parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         parameter.size = dimension;
