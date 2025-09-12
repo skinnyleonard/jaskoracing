@@ -15,9 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import screens.Constants;
@@ -26,6 +24,7 @@ import screens.PlayScreen;
 public class MapLoader implements Disposable {
     private static final String MAP_WALL = "wall";
     private static final String MAP_PLAYER = "player";
+    private static final String MAP_CHECK = "checkpoints";
 
     private final World mWorld;
     private final TiledMap mMap;
@@ -70,6 +69,28 @@ public class MapLoader implements Disposable {
         }
 //        System.out.println(mMap.getLayers().get("bg").getProperties().get("pijja", String.class));
 
+        for (MapObject rObject : mMap.getLayers().get(MAP_CHECK).getObjects()) {
+            if(rObject instanceof PolylineMapObject) {
+                float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
+                Vector2[] worldVertices = new Vector2[vertices.length / 2];
+
+                for (int i = 0; i < vertices.length / 2; i++) {
+                    worldVertices[i] = new Vector2();
+                    worldVertices[i].x = vertices[i*2]/Constants.PPM;
+                    worldVertices[i].y = vertices[i*2+1]/Constants.PPM;
+
+
+                }
+                ShapeFactory.createCheck(
+                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, true
+                );
+
+
+
+            }
+        }
+
+
         for(MapLayer rObject : mMap.getLayers()) {
             if(rObject instanceof TiledMapImageLayer) {
                 TiledMapImageLayer textureObj = (TiledMapImageLayer) rObject;
@@ -88,7 +109,7 @@ public class MapLoader implements Disposable {
     public Body getPlayers() {
         final Rectangle rectangle = mMap.getLayers().get(MAP_PLAYER).getObjects().getByType(RectangleMapObject.class).get(0).getRectangle();
         System.out.println(rectangle.getWidth() + "x" + rectangle.getHeight());
-        return ShapeFactory.createRectangle(
+        return ShapeFactory.createPlayer(
             new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2),
             new Vector2(rectangle.getWidth() / 2, rectangle.getHeight() / 2),
             BodyDef.BodyType.DynamicBody, mWorld, 0.4f, false);

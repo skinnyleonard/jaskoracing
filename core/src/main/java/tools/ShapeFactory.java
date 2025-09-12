@@ -27,6 +27,26 @@ public class ShapeFactory {
 		return body;
 	}
 
+    public static Body createPlayer(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
+        final BodyDef bdef = new BodyDef();
+        bdef.position.set(position.x / Constants.PPM, position.y / Constants.PPM);
+        bdef.type = type;
+        final Body body = world.createBody(bdef);
+
+        final PolygonShape shape = new PolygonShape();
+        shape.setAsBox(size.x / Constants.PPM, size.y / Constants.PPM);
+        final FixtureDef fdef = new FixtureDef();
+        fdef.shape = shape;
+        fdef.density = density;
+        fdef.isSensor = sensor;
+
+        body.createFixture(fdef).setUserData("car");;
+        shape.dispose();
+
+        return body;
+    }
+
+
     public static Body createPolyline(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
         final BodyDef bdef = new BodyDef();
         final Body body = world.createBody(bdef);
@@ -65,4 +85,27 @@ public class ShapeFactory {
 
         return body;
     }
+
+    public static Body createCheck(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
+        final BodyDef bdef = new BodyDef();
+        final Body body = world.createBody(bdef);
+
+        final ChainShape chain = new ChainShape();
+        chain.createChain(worldVertices);
+
+        bdef.type = type;
+
+        final FixtureDef fdef = new FixtureDef();
+        fdef.shape = chain;
+        fdef.density = density;
+        fdef.isSensor = sensor;
+
+        body.createFixture(fdef).setUserData("check");
+        chain.dispose();
+
+        return body;
+    }
+
+
 }
+
