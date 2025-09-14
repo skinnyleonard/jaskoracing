@@ -67,7 +67,6 @@ public class MapLoader implements Disposable {
                 );
             }
         }
-//        System.out.println(mMap.getLayers().get("bg").getProperties().get("pijja", String.class));
 
         for (MapObject rObject : mMap.getLayers().get(MAP_CHECK).getObjects()) {
             if(rObject instanceof PolylineMapObject) {
