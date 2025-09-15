@@ -1,0 +1,6 @@
+auto.png
+bg.png
+grass.png
+libgdx.png
+mapa.png
+propaganda.png
