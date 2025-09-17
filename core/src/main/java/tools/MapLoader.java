@@ -68,8 +68,10 @@ public class MapLoader implements Disposable {
             }
         }
 
-        for (MapObject rObject : mMap.getLayers().get(MAP_CHECK).getObjects()) {
+        for (MapObject rObject : mMap.getLayers().get("checkpoints").getObjects()) {
             if(rObject instanceof PolylineMapObject) {
+                String name = rObject.getName();
+                System.out.println("" + name);
                 float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
@@ -81,7 +83,7 @@ public class MapLoader implements Disposable {
 
                 }
                 ShapeFactory.createCheck(
-                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, true
+                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, true, name
                 );
 
 

@@ -86,7 +86,7 @@ public class ShapeFactory {
         return body;
     }
 
-    public static Body createCheck(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
+    public static Body createCheck(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor, String name) {
         final BodyDef bdef = new BodyDef();
         final Body body = world.createBody(bdef);
 
@@ -100,7 +100,7 @@ public class ShapeFactory {
         fdef.density = density;
         fdef.isSensor = sensor;
 
-        body.createFixture(fdef).setUserData("check");
+        body.createFixture(fdef).setUserData(name);
         chain.dispose();
 
         return body;

@@ -14,9 +14,11 @@ public class WorldContactListener implements ContactListener{
 		Fixture fixA = contact.getFixtureA();
 		Fixture fixB = contact.getFixtureB();
 
-        if ( (fixA.getUserData() == "car" && fixB.getUserData() == "check") ||
-            (fixA.getUserData() == "check" && fixB.getUserData() == "car") ) {
-            System.out.println("Checkpoint reached!");
+        System.out.println(fixA.getUserData());
+
+        if ( (fixA.getUserData() == "car" && fixB.getUserData() == ("check9") ||
+            (fixA.getUserData() == ("check9") && fixB.getUserData() == "car"))) {
+            System.out.println("Checkpoint");
         }
 	}
 
