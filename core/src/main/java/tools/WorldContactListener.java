@@ -23,14 +23,13 @@ public class WorldContactListener implements ContactListener{
         if ( (fixA.getUserData() == "car" && fixB.getUserData() == (check) ||
             (fixA.getUserData() == (check) && fixB.getUserData() == "car"))) {
 
-            System.out.println("checkcount: " + checkCount);
             if (checkCount+1 == Integer.parseInt(check.replaceAll("[^0-9]", ""))){
                 checkCount++;
             }
             else if (checkCount == MapLoader.maxCheck && Integer.parseInt(check.replaceAll("[^0-9]", "")) == 1){
                 checkCount = 1;
             }
-
+            System.out.println("checkcount: " + checkCount);
             }
 	    }
         else if ( (fixA.getUserData() == "car" && fixB.getUserData() == ("pared") ||
