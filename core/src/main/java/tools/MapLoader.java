@@ -63,7 +63,7 @@ public class MapLoader implements Disposable {
                     worldVertices[i].y = vertices[i*2+1]/Constants.PPM;
                 }
                 ShapeFactory.createPolyline(
-                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, false
+                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, false, "pared"
                 );
             }
         }
