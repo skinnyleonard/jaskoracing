@@ -25,6 +25,7 @@ public class MapLoader implements Disposable {
     private static final String MAP_WALL = "wall";
     private static final String MAP_PLAYER = "player";
     private static final String MAP_CHECK = "checkpoints";
+    public static int maxCheck = 0;
 
     private final World mWorld;
     private final TiledMap mMap;
@@ -71,7 +72,8 @@ public class MapLoader implements Disposable {
         for (MapObject rObject : mMap.getLayers().get("checkpoints").getObjects()) {
             if(rObject instanceof PolylineMapObject) {
                 String name = rObject.getName();
-                System.out.println("" + name);
+                System.out.println(name + " cargado...");
+              maxCheck = Integer.parseInt(name.replaceAll("[^0-9]", ""));
                 float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
