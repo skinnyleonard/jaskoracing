@@ -110,6 +110,6 @@ public class GameScreen extends ScreenAdapter implements NetManager {
 //        pixmap.pos.y = (float) (pixmap.track.getHeight() - position.y * Math.sin(pixmap.angle));
         pixmap.pos.x = position.x;
         pixmap.pos.y = pixmap.track.getHeight() - position.y;
-        pixmap.angle = Math.toRadians(position.z);
+        pixmap.angle = -Math.toRadians(position.z) - Math.toRadians(90);
     }
 }
