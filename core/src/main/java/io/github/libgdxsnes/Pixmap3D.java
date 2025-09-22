@@ -18,7 +18,7 @@ public class Pixmap3D extends Pixmap {
     private int horizon;
     public double angle;
     private Pixmap grass;
-    private Pixmap track;
+    public Pixmap track;
     public Vector3 pos;
     private Vector3 scale;
     public float bgPos;
@@ -35,9 +35,9 @@ public class Pixmap3D extends Pixmap {
         bg = new Texture("bg.png");
         grass = new Pixmap(Gdx.files.internal("grass.png"));
         track = new Pixmap(Gdx.files.internal("mapa.png"));
-        pos = new Vector3(903, 768, 16);
+        pos = new Vector3(652, 2000, 32);
         scale = new Vector3(300, 300, 0);
-        angle = 2;
+        angle = 0;
 
         bgPos = -256;
 
@@ -53,6 +53,7 @@ public class Pixmap3D extends Pixmap {
         pixmapTex.draw(this, 0, 0);
         batch.draw(pixmapTex, 0, 0);
         batch.draw(bg, bgPos, GameScreen.GAME_HEIGHT - 40);
+        System.out.println("x: "+pos.x+", y: "+pos.y+" angle: "+angle);
     }
 
     private void drawGround() {
@@ -123,7 +124,6 @@ public class Pixmap3D extends Pixmap {
             int y = (int) kart.screen.y;
             int w = (int) kart.size.x;
             int h = (int) kart.size.y;
-            System.out.println(kart.size.x+"x"+kart.size.y);
 
             drawPixmap(kart.pixmap, 0, 0, sw, sh, x, y, w, h);
         }

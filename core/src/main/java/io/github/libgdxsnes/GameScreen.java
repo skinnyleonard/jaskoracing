@@ -1,16 +1,16 @@
 package io.github.libgdxsnes;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
+import online.Client;
+import online.NetManager;
 
-public class GameScreen extends ScreenAdapter {
+public class GameScreen extends ScreenAdapter implements NetManager {
 
     public static final int GAME_HEIGHT = 224;
     public static final int GAME_WIDTH = 256;
@@ -21,6 +21,7 @@ public class GameScreen extends ScreenAdapter {
     private OrthographicCamera camera;
     private Pixmap3D pixmap;
     private Texture texture;
+    private Client  client;
 
     public GameScreen(Game game, SpriteBatch batch) {
         this.game = game;
@@ -35,6 +36,9 @@ public class GameScreen extends ScreenAdapter {
         camera.update();
 
         pixmap = new Pixmap3D(GAME_WIDTH, GAME_HEIGHT, Pixmap.Format.RGB565);
+        client = new Client(this);
+        client.start();
+        client.sendMessage("connect");
     }
 
     @Override
@@ -88,5 +92,24 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void dispose() {
 
+    }
+
+    @Override
+    public void connect(boolean state) {
+
+    }
+
+    @Override
+    public void timeOutEnded() {
+
+    }
+
+    @Override
+    public void updateSprites(Vector3 position) {
+//        pixmap.pos.x = (float) (pixmap.track.getHeight() - position.x * Math.cos(pixmap.angle));
+//        pixmap.pos.y = (float) (pixmap.track.getHeight() - position.y * Math.sin(pixmap.angle));
+        pixmap.pos.x = position.x;
+        pixmap.pos.y = pixmap.track.getHeight() - position.y;
+        pixmap.angle = Math.toRadians(position.z);
     }
 }
