@@ -47,7 +47,7 @@ public class ShapeFactory {
     }
 
 
-    public static Body createPolyline(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor, String name) {
+    public static Body createPolyline(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
         final BodyDef bdef = new BodyDef();
         final Body body = world.createBody(bdef);
 
@@ -61,7 +61,7 @@ public class ShapeFactory {
         fdef.density = density;
         fdef.isSensor = sensor;
 
-        body.createFixture(fdef).setUserData(name);
+        body.createFixture(fdef);
         chain.dispose();
 
         return body;
@@ -86,7 +86,7 @@ public class ShapeFactory {
         return body;
     }
 
-    public static Body createCheck(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor, String name) {
+    public static Body createCheck(Vector2[] worldVertices, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
         final BodyDef bdef = new BodyDef();
         final Body body = world.createBody(bdef);
 
@@ -100,7 +100,7 @@ public class ShapeFactory {
         fdef.density = density;
         fdef.isSensor = sensor;
 
-        body.createFixture(fdef).setUserData(name);
+        body.createFixture(fdef).setUserData("check");
         chain.dispose();
 
         return body;

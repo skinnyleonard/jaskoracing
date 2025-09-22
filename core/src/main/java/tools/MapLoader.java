@@ -25,7 +25,6 @@ public class MapLoader implements Disposable {
     private static final String MAP_WALL = "wall";
     private static final String MAP_PLAYER = "player";
     private static final String MAP_CHECK = "checkpoints";
-    public static int maxCheck = 0;
 
     private final World mWorld;
     private final TiledMap mMap;
@@ -64,16 +63,14 @@ public class MapLoader implements Disposable {
                     worldVertices[i].y = vertices[i*2+1]/Constants.PPM;
                 }
                 ShapeFactory.createPolyline(
-                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, false, "pared"
+                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, false
                 );
             }
         }
+//        System.out.println(mMap.getLayers().get("bg").getProperties().get("pijja", String.class));
 
-        for (MapObject rObject : mMap.getLayers().get("checkpoints").getObjects()) {
+        for (MapObject rObject : mMap.getLayers().get(MAP_CHECK).getObjects()) {
             if(rObject instanceof PolylineMapObject) {
-                String name = rObject.getName();
-                System.out.println(name + " cargado...");
-              maxCheck = Integer.parseInt(name.replaceAll("[^0-9]", ""));
                 float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
@@ -85,7 +82,7 @@ public class MapLoader implements Disposable {
 
                 }
                 ShapeFactory.createCheck(
-                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, true, name
+                    worldVertices, BodyDef.BodyType.StaticBody, world, 1f, true
                 );
 
 
@@ -111,7 +108,6 @@ public class MapLoader implements Disposable {
 
     public Body getPlayers() {
         final Rectangle rectangle = mMap.getLayers().get(MAP_PLAYER).getObjects().getByType(RectangleMapObject.class).get(0).getRectangle();
-        System.out.println(rectangle.getWidth() + "x" + rectangle.getHeight());
         return ShapeFactory.createPlayer(
             new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2),
             new Vector2(rectangle.getWidth() / 2, rectangle.getHeight() / 2),

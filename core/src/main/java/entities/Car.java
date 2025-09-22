@@ -3,6 +3,7 @@ package entities;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import screens.Constants;
 import tools.BodyHolder;
 import tools.MapLoader;
+import tools.Size;
 
 
 public class Car extends BodyHolder {
@@ -50,6 +52,16 @@ public class Car extends BodyHolder {
         getBody().setLinearDamping(LINEAR_DAMPING);
         getBody().getFixtureList().get(0).setRestitution(RESTITUTION);
         createWheels(world, wheelDrive);
+    }
+
+    public String getMetrics() {
+//        System.out.println("x="+(getBody().getPosition().x*Constants.PPM-((Size.getBodySize(getBody()).x*2)*Constants.PPM)/2)+
+//                           ", y="+(getBody().getPosition().y*Constants.PPM-((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2)+
+//                           ", angle="+Math.toDegrees(getBody().getAngle()));
+
+        return (getBody().getPosition().x*Constants.PPM-((Size.getBodySize(getBody()).x*2)*Constants.PPM)/2)+
+            ";"+(getBody().getPosition().y*Constants.PPM+((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2)+
+            ";"+Math.toDegrees(getBody().getAngle());
     }
 
     private void createWheels(World world, int wheelDrive) {

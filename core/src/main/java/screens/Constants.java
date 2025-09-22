@@ -14,4 +14,3 @@ public class Constants {
     public static final String FONDOMENU = "fondos/fondo.jpg";
     public static final String FUENTEMENU = "fuentes/moki.otf";
 }
-

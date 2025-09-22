@@ -35,7 +35,7 @@ public class HUD implements Disposable{
         scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         levelLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        menLabel = new Label("Este mapa tiene " + MapLoader.maxCheck  +" Checkpoints.", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        menLabel = new Label("Jasko P. Balini", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
         table.add(menLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);

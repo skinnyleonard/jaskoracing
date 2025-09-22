@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import entities.Car;
 import io.github.jasko.Main;
+import online.Server;
 import tools.HUD;
 import tools.ImageRenderer;
 import tools.MapLoader;
@@ -33,6 +34,7 @@ public class PlayScreen implements Screen {
     private final MapLoader mapLoader;
     private static Main game;
     private HUD hud;
+    private Server server;
 
     public PlayScreen() {
         batch = new SpriteBatch();
@@ -49,7 +51,9 @@ public class PlayScreen implements Screen {
 
     @Override
     public void show() {
-
+        server = new Server();
+        server.start();
+        server.pingEveryone("hola bellos");
     }
 
     @Override
@@ -99,6 +103,9 @@ public class PlayScreen implements Screen {
         player.update(delta);
         camera.position.set(player.getBody().getPosition(), 0);
         camera.update();
+//        player.getMetrics();
+//        server.pingEveryone("hola bellos");
+        this.server.pingEveryone("updatePos;"+player.getMetrics());
         world.step(delta, 6, 2);
     }
 
