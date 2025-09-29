@@ -11,6 +11,7 @@ import tools.InteractiveTileObject;
 public class WorldContactListener implements ContactListener{
 
     int checkCount = 1;
+    int lapCount = 1;
     String col = "check";
     @Override
 	public void beginContact(Contact contact) {
@@ -28,8 +29,10 @@ public class WorldContactListener implements ContactListener{
             }
             else if (checkCount == MapLoader.maxCheck && Integer.parseInt(check.replaceAll("[^0-9]", "")) == 1){
                 checkCount = 1;
+                lapCount = lapCount + 1;
             }
             System.out.println("checkcount: " + checkCount);
+            System.out.println("lapcount: " + lapCount);
             }
 	    }
         else if ( (fixA.getUserData() == "car" && fixB.getUserData() == ("pared") ||
