@@ -1,11 +1,15 @@
 package online;
 
+import tools.HUD;
+import tools.MapLoader;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+
 
 public class Server extends Thread {
     private DatagramSocket socket;
@@ -46,6 +50,7 @@ public class Server extends Thread {
     public void pingEveryone(String message) {
         for(User user : users) {
             sendMessage(message, user.getIp(), user.getPort());
+
         }
     }
 

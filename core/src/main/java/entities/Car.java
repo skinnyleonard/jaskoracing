@@ -13,6 +13,8 @@ import tools.BodyHolder;
 import tools.MapLoader;
 import tools.Size;
 
+import java.text.DecimalFormat;
+
 
 public class Car extends BodyHolder {
     public static final int DRIVE_2WD = 0;
@@ -58,7 +60,6 @@ public class Car extends BodyHolder {
 //        System.out.println("x="+(getBody().getPosition().x*Constants.PPM-((Size.getBodySize(getBody()).x*2)*Constants.PPM)/2)+
 //                           ", y="+(getBody().getPosition().y*Constants.PPM-((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2)+
 //                           ", angle="+Math.toDegrees(getBody().getAngle()));
-
         return (getBody().getPosition().x*Constants.PPM-((Size.getBodySize(getBody()).x*2)*Constants.PPM)/2)+
             ";"+(getBody().getPosition().y*Constants.PPM+((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2)+
             ";"+Math.toDegrees(getBody().getAngle());

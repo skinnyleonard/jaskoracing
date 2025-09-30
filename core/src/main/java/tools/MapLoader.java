@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import screens.Constants;
 import screens.PlayScreen;
+import tools.HUD;
 
 public class MapLoader implements Disposable {
     private static final String MAP_WALL = "wall";
@@ -74,6 +75,8 @@ public class MapLoader implements Disposable {
                 String name = rObject.getName();
                 System.out.println(name + " cargado...");
               maxCheck = Integer.parseInt(name.replaceAll("[^0-9]", ""));
+                HUD.checkLabel.setText(WorldContactListener.checkCount + " / " + MapLoader.maxCheck );
+                HUD.lapLabel.setText(WorldContactListener.lapCount + " / " + WorldContactListener.maxLap);
                 float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];
 

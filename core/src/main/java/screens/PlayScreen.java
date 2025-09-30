@@ -22,6 +22,7 @@ import static entities.Car.*;
 import tools.WorldContactListener;
 
 import java.security.PublicKey;
+import java.text.DecimalFormat;
 
 public class PlayScreen implements Screen {
 
@@ -98,7 +99,7 @@ public class PlayScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         b2dr.render(world, camera.combined);
     }
-
+    DecimalFormat df = new DecimalFormat("0.00");
     private void update(final float delta) {
         player.update(delta);
         camera.position.set(player.getBody().getPosition(), 0);
@@ -106,6 +107,9 @@ public class PlayScreen implements Screen {
 //        player.getMetrics();
 //        server.pingEveryone("hola bellos");
         this.server.pingEveryone("updatePos;"+player.getMetrics());
+        HUD.debugLabel.setText("x: "+df.format(Float.parseFloat(player.getMetrics().split(";")[0]))+
+            "\ny: "+df.format(Float.parseFloat(player.getMetrics().split(";")[1]))+
+            "\nangle: "+df.format(Float.parseFloat(player.getMetrics().split(";")[2])));
         world.step(delta, 6, 2);
     }
 

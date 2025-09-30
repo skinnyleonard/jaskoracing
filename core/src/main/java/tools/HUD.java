@@ -18,9 +18,10 @@ public class HUD implements Disposable{
     private Integer score;
 
     Label scoreLabel;
-    Label levelLabel;
-    Label menLabel;
+    public static Label debugLabel;
+    public static Label checkLabel;
     Label timeLabel;
+    public static Label lapLabel;
 
     public HUD(SpriteBatch sb) {
         score = 0;
@@ -34,14 +35,16 @@ public class HUD implements Disposable{
 
         scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        levelLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        menLabel = new Label("Este mapa tiene " + MapLoader.maxCheck  +" Checkpoints.", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        debugLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        checkLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        lapLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
-        table.add(menLabel).expandX().padTop(10);
+        table.add(checkLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);
+        table.add(lapLabel).expandX().padTop(10);
         table.row();
         table.add(scoreLabel).expandX();
-        table.add(levelLabel).expandX();
+        table.add(debugLabel).expandX();
 
         stage.addActor(table);
     }
