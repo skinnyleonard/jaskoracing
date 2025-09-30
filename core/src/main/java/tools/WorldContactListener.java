@@ -28,7 +28,11 @@ public class WorldContactListener implements ContactListener{
                 checkCount++;
             }
             else if (checkCount == MapLoader.maxCheck && Integer.parseInt(check.replaceAll("[^0-9]", "")) == 1){
+
                 checkCount = 1;
+                if (lapCount == 3){
+                    System.out.println("Llegaste a la meta papu");
+                }
                 lapCount = lapCount + 1;
             }
             System.out.println("checkcount: " + checkCount);
