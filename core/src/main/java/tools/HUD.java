@@ -20,8 +20,9 @@ public class HUD implements Disposable{
     Label scoreLabel;
     public static Label debugLabel;
     public static Label checkLabel;
-    Label timeLabel;
+    public static Label timeLabel;
     public static Label lapLabel;
+
 
     public HUD(SpriteBatch sb) {
         score = 0;
@@ -33,11 +34,15 @@ public class HUD implements Disposable{
         table.top();
         table.setFillParent(true);
 
+
         scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        timeLabel = new Label("Tiempo: ", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         debugLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         checkLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         lapLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+
+        contador contador = new contador();
+        contador.start();
 
         table.add(checkLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);
