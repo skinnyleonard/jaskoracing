@@ -1,6 +1,7 @@
 package online;
 
-import tools.HUD;
+import entities.Car;
+import screens.PlayScreen;
 import tools.MapLoader;
 
 import java.io.IOException;
@@ -10,16 +11,22 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-
 public class Server extends Thread {
+    public static int clientIndexed = 0;
     private DatagramSocket socket;
     private int port = 5555;
     private boolean end = false;
     private final int MAX_CLIENTS = 2;
     private int connectedUsers = 0;
-    private ArrayList<User> users = new ArrayList<User>();
+    public ArrayList<User> users = new ArrayList<User>();
+    private NetManager netManager;
+    public static String move = "";
+    private Car player;
+    private MapLoader mapLoader;
+    private PlayScreen playScreen;
 
-    public Server() {
+    public Server(NetManager netManager) {
+        this.netManager = netManager;
         try {
             System.out.println("server iniciado en el puerto "+port);
             socket = new DatagramSocket(port);
@@ -37,7 +44,7 @@ public class Server extends Thread {
         }));
         do {
             DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
-            System.out.println("esperando mensajito, con cariño el servidor");
+//            System.out.println("esperando mensajito, con cariño el servidor");
             try {
                 socket.receive(packet);
                 processMessage(packet);
@@ -50,7 +57,6 @@ public class Server extends Thread {
     public void pingEveryone(String message) {
         for(User user : users) {
             sendMessage(message, user.getIp(), user.getPort());
-
         }
     }
 
@@ -107,7 +113,7 @@ public class Server extends Thread {
 //    }
     private void processMessage(DatagramPacket packet) {
         String message = (new String(packet.getData())).trim();
-        System.out.println("Mensaje recibido: " + message);
+//        System.out.println("Mensaje recibido: " + message);
         String[] parts = message.split("\\$");
 
         switch (parts[0]) {
@@ -116,15 +122,25 @@ public class Server extends Thread {
                 this.connectedUsers++;
                 User newUser = new User("usuario"+connectedUsers, packet.getAddress(), packet.getPort());
                 this.users.add(newUser);
-                System.out.println(users.get(0).getUsername());
+                netManager.placeNewPlayer(connectedUsers);
+                this.pingEveryone(netManager.getNewPlayerPos(connectedUsers));
+                break;
+            case "move":
+                move = parts[1];
+                clientIndexed = searchUser(packet);
+                netManager.moveCar(parts[1], searchUser(packet));
+//                sendMessage(netManager.updateMetrics(searchUser(packet)),  packet.getAddress(), packet.getPort());
+                break;
         }
     }
-    private int searchUser(InetAddress address, int port) {
+
+    private int searchUser(DatagramPacket packet) {
         int i = 0;
         int indexUser = -1;
-        while (i < this.connectedUsers && indexUser == -1) {
+        while (i < users.size() && indexUser == -1) {
             User user = this.users.get(i);
-            if(user.getIp().equals(address) && user.getPort() == port) {
+            String id = packet.getAddress()+":"+packet.getPort();
+            if(id.equals(user.getId())) {
                 indexUser = i;
             }
             i++;

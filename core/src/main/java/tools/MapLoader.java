@@ -1,26 +1,19 @@
 package tools;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapRenderer;
-import com.badlogic.gdx.maps.objects.PolygonMapObject;
-import com.badlogic.gdx.maps.objects.PolylineMapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.objects.TextureMapObject;
+import com.badlogic.gdx.maps.objects.*;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapImageLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import screens.Constants;
 import screens.PlayScreen;
-import tools.HUD;
+
+import java.util.ArrayList;
 
 public class MapLoader implements Disposable {
     private static final String MAP_WALL = "wall";
@@ -30,7 +23,7 @@ public class MapLoader implements Disposable {
 
     private final World mWorld;
     private final TiledMap mMap;
-
+    public ArrayList<PointMapObject> positions = new ArrayList<PointMapObject>();
     public MapLoader(World world) {
         this.mWorld = world;
         mMap = new TmxMapLoader().load(Constants.MAP_NAME);
@@ -69,12 +62,18 @@ public class MapLoader implements Disposable {
                 );
             }
         }
+        for(MapObject rObject : mMap.getLayers().get("grid").getObjects()) {
+            if(rObject instanceof PointMapObject) {
+                PointMapObject point = (PointMapObject) rObject;
+                positions.add(point);
+            }
+        }
 
         for (MapObject rObject : mMap.getLayers().get("checkpoints").getObjects()) {
             if(rObject instanceof PolylineMapObject) {
                 String name = rObject.getName();
                 System.out.println(name + " cargado...");
-              maxCheck = Integer.parseInt(name.replaceAll("[^0-9]", ""));
+                maxCheck = Integer.parseInt(name.replaceAll("[^0-9]", ""));
                 HUD.checkLabel.setText(WorldContactListener.checkCount + " / " + MapLoader.maxCheck );
                 HUD.lapLabel.setText(WorldContactListener.lapCount + " / " + WorldContactListener.maxLap);
                 float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
@@ -96,7 +95,6 @@ public class MapLoader implements Disposable {
             }
         }
 
-
         for(MapLayer rObject : mMap.getLayers()) {
             if(rObject instanceof TiledMapImageLayer) {
                 TiledMapImageLayer textureObj = (TiledMapImageLayer) rObject;
@@ -112,9 +110,15 @@ public class MapLoader implements Disposable {
         }
     }
 
+    public Body placePlayer(float x, float y) {
+        return ShapeFactory.createPlayer(
+            new Vector2(x + (float) 128 / 2, y - (float) 256 / 2),
+            new Vector2((float) 128 / 2, (float) 256 / 2),
+            BodyDef.BodyType.DynamicBody, mWorld, 0.4f, false);
+    }
+
     public Body getPlayers() {
         final Rectangle rectangle = mMap.getLayers().get(MAP_PLAYER).getObjects().getByType(RectangleMapObject.class).get(0).getRectangle();
-        System.out.println(rectangle.getWidth() + "x" + rectangle.getHeight());
         return ShapeFactory.createPlayer(
             new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2),
             new Vector2(rectangle.getWidth() / 2, rectangle.getHeight() / 2),

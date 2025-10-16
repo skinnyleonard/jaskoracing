@@ -41,8 +41,8 @@ public class HUD implements Disposable{
         checkLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         lapLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
 
-        contador contador = new contador();
-        contador.start();
+        Contador contador = new Contador();
+//        contador.start();
 
         table.add(checkLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);

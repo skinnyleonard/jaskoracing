@@ -26,4 +26,8 @@ public class User {
     public int getPort() {
         return port;
     }
+
+    public String getId() {
+        return id;
+    }
 }

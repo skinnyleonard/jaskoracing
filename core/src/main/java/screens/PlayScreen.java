@@ -6,25 +6,26 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.objects.TextureMapObject;
+import com.badlogic.gdx.maps.objects.PointMapObject;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import entities.Car;
 import io.github.jasko.Main;
+import online.NetManager;
 import online.Server;
+import online.User;
 import tools.HUD;
-import tools.ImageRenderer;
 import tools.MapLoader;
 import static entities.Car.*;
 import tools.WorldContactListener;
 
-import java.security.PublicKey;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 
-public class PlayScreen implements Screen {
+public class PlayScreen implements Screen, NetManager {
 
     public static SpriteBatch batch;
     private final World world;
@@ -32,10 +33,13 @@ public class PlayScreen implements Screen {
     private final OrthographicCamera camera;
     private final Viewport viewport;
     private final Car player;
-    private final MapLoader mapLoader;
+    public final MapLoader mapLoader;
     private static Main game;
     private HUD hud;
     private Server server;
+    DecimalFormat df = new DecimalFormat("0.00");
+    private ArrayList<Car> players = new ArrayList<Car>();
+    private ArrayList<String> usersSprites = new ArrayList<String>();
 
     public PlayScreen() {
         batch = new SpriteBatch();
@@ -46,13 +50,13 @@ public class PlayScreen implements Screen {
         hud = new HUD(batch);
         viewport = new ExtendViewport(640 / Constants.PPM, 480 / Constants.PPM, camera);
         mapLoader = new MapLoader(world);
-        player = new Car(35.0f, 0.8f, 60, mapLoader, DRIVE_4WD, world);
+        player = new Car(35.0f, 0.8f, 60, mapLoader, DRIVE_4WD, world, 652, 4912);
         world.setContactListener(new WorldContactListener());
     }
 
     @Override
     public void show() {
-        server = new Server();
+        server = new Server(this);
         server.start();
         server.pingEveryone("hola bellos");
     }
@@ -62,6 +66,11 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         handleInput();
+        if(players.isEmpty()) {
+//            System.out.println("pis");
+        } else {
+            moveCar(Server.move, Server.clientIndexed);
+        }
         update(delta);
         draw();
         hud.stage.draw();
@@ -99,17 +108,22 @@ public class PlayScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         b2dr.render(world, camera.combined);
     }
-    DecimalFormat df = new DecimalFormat("0.00");
+
     private void update(final float delta) {
         player.update(delta);
+        for(Car car : players) {
+            car.update(delta);
+        }
+        int i = 0;
+        for(User user : server.users) {
+            server.sendMessage("updatePos;"+players.get(i).getMetrics(), user.getIp(), user.getPort());
+            i++;
+        }
         camera.position.set(player.getBody().getPosition(), 0);
         camera.update();
 //        player.getMetrics();
 //        server.pingEveryone("hola bellos");
-        this.server.pingEveryone("updatePos;"+player.getMetrics());
-        HUD.debugLabel.setText("x: "+df.format(Float.parseFloat(player.getMetrics().split(";")[0]))+
-            "\ny: "+df.format(Float.parseFloat(player.getMetrics().split(";")[1]))+
-            "\nangle: "+df.format(Float.parseFloat(player.getMetrics().split(";")[2])));
+//        this.server.pingEveryone("updatePos;"+player.getMetrics());
         world.step(delta, 6, 2);
     }
 
@@ -143,4 +157,57 @@ public class PlayScreen implements Screen {
         mapLoader.dispose();
     }
 
+    @Override
+    public void connect(boolean state) {
+
+    }
+
+    @Override
+    public void moveCar(String move, int client) {
+        if(move.equals("up")) {
+            players.get(client).setDriveDirection(DRIVE_DIRECTION_FORWARD);
+            System.out.println("se mueve up");
+        } else if(move.equals("down")) {
+            players.get(client).setDriveDirection(DRIVE_DIRECTION_BACKWARD);
+            System.out.println("se mueve down");
+        } else if(move.equals("afk")) {
+            players.get(client).setDriveDirection(DRIVE_DIRECTION_NONE);
+        }
+
+        if(move.equals("left")) {
+            players.get(client).setTurnDirection(TURN_DIRECTION_LEFT);
+            System.out.println("se mueve left");
+        } else if(move.equals("right")) {
+            players.get(client).setTurnDirection(TURN_DIRECTION_RIGHT);
+            System.out.println("se mueve right");
+        } else if(move.equals("afk")) {
+            players.get(client).setTurnDirection(TURN_DIRECTION_NONE);
+        }
+    }
+
+    @Override
+    public void placeNewPlayer(int connectedUsers) {
+        int arrPosition = mapLoader.positions.size() - (connectedUsers + 1);
+        float x = mapLoader.positions.get(arrPosition).getPoint().x;
+        float y = mapLoader.positions.get(arrPosition).getPoint().y;
+        players.add(new Car(35.0f, 0.8f, 60, mapLoader, DRIVE_4WD, world, x, y));
+        this.usersSprites.add("cars/subaru/1.png");
+    }
+
+    @Override
+    public String getNewPlayerPos(int connectedUsers) {
+        StringBuilder sb = new StringBuilder();
+
+        for(Car car : players) {
+            sb.append("cars/subaru/1.png%").append(car.getMetrics()).append("$");
+        }
+
+        return "newCar;"+sb.toString();
+    }
+
+
+    @Override
+    public String updateMetrics(int indexUser) {
+        return "updatePos;"+players.get(indexUser).getMetrics();
+    }
 }

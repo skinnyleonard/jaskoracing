@@ -9,12 +9,10 @@ import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.Array;
 import screens.Constants;
+import sun.awt.PeerEvent;
 import tools.BodyHolder;
 import tools.MapLoader;
 import tools.Size;
-
-import java.text.DecimalFormat;
-
 
 public class Car extends BodyHolder {
     public static final int DRIVE_2WD = 0;
@@ -46,8 +44,9 @@ public class Car extends BodyHolder {
     private final float mRegularMaxSpeed;
     private float aceleration;
 
-    public Car(final float maxSpeed, final float drift, final float aceleration, final MapLoader  mapLoader, int wheelDrive, World world) {
-        super(mapLoader.getPlayers());
+    public Car(final float maxSpeed, final float drift, final float aceleration, final MapLoader  mapLoader, int wheelDrive, World world, float x, float y) {
+//        super(new Vector2(652/2, 2000/2), new Vector2(128/2, 256/2), BodyDef.BodyType.DynamicBody, world, 0.4f, false, 1);
+        super(mapLoader.placePlayer(x, y));
         this.mRegularMaxSpeed = maxSpeed;
         this.drift = drift;
         this.aceleration = aceleration;
@@ -57,12 +56,9 @@ public class Car extends BodyHolder {
     }
 
     public String getMetrics() {
-//        System.out.println("x="+(getBody().getPosition().x*Constants.PPM-((Size.getBodySize(getBody()).x*2)*Constants.PPM)/2)+
-//                           ", y="+(getBody().getPosition().y*Constants.PPM-((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2)+
-//                           ", angle="+Math.toDegrees(getBody().getAngle()));
         return (getBody().getPosition().x*Constants.PPM-((Size.getBodySize(getBody()).x*2)*Constants.PPM)/2)+
-            ";"+(getBody().getPosition().y*Constants.PPM+((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2)+
-            ";"+Math.toDegrees(getBody().getAngle());
+            "%"+(getBody().getPosition().y*Constants.PPM+((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2)+
+            "%"+getBody().getAngle();
     }
 
     private void createWheels(World world, int wheelDrive) {
