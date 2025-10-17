@@ -5,10 +5,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import online.Client;
 import online.NetManager;
+
+import java.text.DecimalFormat;
 
 public class GameScreen extends ScreenAdapter implements NetManager {
 
@@ -22,23 +25,32 @@ public class GameScreen extends ScreenAdapter implements NetManager {
     private Pixmap3D pixmap;
     private Texture texture;
     private Client  client;
+    private HUD hud;
+    DecimalFormat df = new DecimalFormat("0.00");
+    private InputManager inputManager;
+    private Sprite sprite;
 
     public GameScreen(Game game, SpriteBatch batch) {
         this.game = game;
         this.batch = batch;
-        texture = new Texture(Gdx.files.internal("auto.png"));
+        texture = new Texture(Gdx.files.internal("cars/subaru/1.png"));
+        hud = new HUD(batch);
+        sprite = new Sprite(texture);
     }
 
     @Override
     public void show() {
         camera = new OrthographicCamera(GAME_WIDTH, GAME_HEIGHT);
+        camera.setToOrtho(false, GAME_WIDTH, GAME_HEIGHT);
         camera.position.set(GAME_WIDTH/2, GAME_HEIGHT/2, 0);
         camera.update();
 
         pixmap = new Pixmap3D(GAME_WIDTH, GAME_HEIGHT, Pixmap.Format.RGB565);
         client = new Client(this);
+        inputManager = new InputManager(client);
         client.start();
         client.sendMessage("connect");
+        Gdx.input.setInputProcessor(inputManager);
     }
 
     @Override
@@ -52,24 +64,39 @@ public class GameScreen extends ScreenAdapter implements NetManager {
 
         batch.begin();
         pixmap.render(batch);
-        batch.draw(texture, GAME_WIDTH/3.5f, 0, 100, 100);
+//        batch.draw(texture, (float) GAME_WIDTH /9, 0, (float) texture.getWidth() /10, (float) texture.getHeight() /10);
+        batch.draw(sprite, (float) GAME_WIDTH /9, 0, (float) texture.getWidth() /10, (float) texture.getHeight() /10);
         batch.end();
+        hud.stage.draw();
     }
 
     private void handleInput(float delta) {
         if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            pixmap.pos.x += (float) (20 * Math.cos(pixmap.angle));
-            pixmap.pos.y += (float) (20 * Math.sin(pixmap.angle));
-        } else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            pixmap.pos.x += (float) (20 * Math.cos(pixmap.angle - Math.toRadians(90)));
-            pixmap.pos.y += (float) (20 * Math.sin(pixmap.angle - Math.toRadians(90)));
-        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            pixmap.pos.x += (float) (20  *Math.cos(pixmap.angle + Math.toRadians(90)));
-            pixmap.pos.y += (float) (20 * Math.sin(pixmap.angle + Math.toRadians(90)));
-        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            pixmap.pos.x -= (float) (20 * Math.cos(pixmap.angle));
-            pixmap.pos.y -= (float) (20 * Math.sin(pixmap.angle));
-        } else if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            client.sendMessage("move$up");
+        } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            client.sendMessage("move$down");
+        } else {
+//            client.sendMessage("move$afk");
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            client.sendMessage("move$left");
+            for(int i=1; i<4; i++) {
+                texture = new Texture(Gdx.files.internal("cars/subaru/"+i+".png"));
+                sprite = new Sprite(texture);
+            }
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            client.sendMessage("move$right");
+            for(int i=1; i<4; i++) {
+                texture = new Texture(Gdx.files.internal("cars/subaru/"+i+".png"));
+                sprite = new Sprite(texture);
+                sprite.flip(true, false);
+            }
+        } else {
+//            client.sendMessage("move$afk");
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             pixmap.angle -= TURN_ANGLE;
             pixmap.bgPos += 0.5f;
             if(pixmap.bgPos >= 0) {
@@ -100,16 +127,27 @@ public class GameScreen extends ScreenAdapter implements NetManager {
     }
 
     @Override
-    public void timeOutEnded() {
-
+    public void updateSprites(String position) {
+        pixmap.pos.x = Float.parseFloat(position.split("%")[0]);
+        pixmap.pos.y = (pixmap.track.getHeight() - Float.parseFloat(position.split("%")[1]));
+        pixmap.angle = -Float.parseFloat(position.split("%")[2]) - Math.toRadians(90);
+//        HUD.debugLabel.setText("x: "+df.format(position.x)+"\n"+"y: "+df.format(position.y));
     }
 
     @Override
-    public void updateSprites(Vector3 position) {
-//        pixmap.pos.x = (float) (pixmap.track.getHeight() - position.x * Math.cos(pixmap.angle));
-//        pixmap.pos.y = (float) (pixmap.track.getHeight() - position.y * Math.sin(pixmap.angle));
-        pixmap.pos.x = position.x;
-        pixmap.pos.y = pixmap.track.getHeight() - position.y;
-        pixmap.angle = -Math.toRadians(position.z) - Math.toRadians(90);
+    public void createSpritePlayer(String lascosas) {
+        for(int i = 0; i < lascosas.split("\\$").length; i++) {
+            System.out.println("auto "+i+":");
+
+            pixmap.entities.add(new Sprite3D(new Pixmap(Gdx.files.internal(
+                lascosas.split("\\$")[i].split("%")[0])),
+                Float.parseFloat(lascosas.split("\\$")[i].split("%")[1]),
+                pixmap.track.getHeight() - Float.parseFloat(lascosas.split("\\$")[i].split("%")[2]))
+            );
+
+            System.out.println("    path: "+lascosas.split("\\$")[i].split("%")[0]);
+            System.out.println("    x: "+lascosas.split("\\$")[i].split("%")[1]);
+            System.out.println("    y: "+lascosas.split("\\$")[i].split("%")[2]);
+        }
     }
 }

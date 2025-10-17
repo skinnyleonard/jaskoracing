@@ -1,8 +1,6 @@
 package io.github.libgdxsnes;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,6 +20,8 @@ public class Pixmap3D extends Pixmap {
     public Vector3 pos;
     private Vector3 scale;
     public float bgPos;
+    public float diffx;
+    public float diffy;
 
     public ArrayList<Sprite3D> entities;
     public Vector2 entScale;
@@ -35,8 +35,8 @@ public class Pixmap3D extends Pixmap {
         bg = new Texture("bg.png");
         grass = new Pixmap(Gdx.files.internal("grass.png"));
         track = new Pixmap(Gdx.files.internal("mapa.png"));
-        pos = new Vector3(652, 2000, 32);
-        scale = new Vector3(300, 300, 0);
+        pos = new Vector3(652, 2000, 120);
+        scale = new Vector3(300, 168, 0);
         angle = 0;
 
         bgPos = -256;
@@ -53,22 +53,30 @@ public class Pixmap3D extends Pixmap {
         pixmapTex.draw(this, 0, 0);
         batch.draw(pixmapTex, 0, 0);
         batch.draw(bg, bgPos, GameScreen.GAME_HEIGHT - 40);
-        System.out.println("x: "+pos.x+", y: "+pos.y+" angle: "+angle);
+//        System.out.println("x: "+pos.x+", y: "+pos.y+" angle: "+angle);
     }
-
     private void drawGround() {
         double dirx = Math.cos(angle);
         double diry = Math.sin(angle);
+
+        int centerScreenX = getWidth() / 2;
+        int targetScreenY = getHeight() - 1;
 
         for(int screeny = horizon; screeny < getHeight(); screeny++) {
             double distanceInWorldSpace = pos.z*scale.y / ((double)screeny-horizon);
             double deltax = -diry * (distanceInWorldSpace/scale.x);
             double deltay = dirx * (distanceInWorldSpace/scale.y);
 
-            double spacex = pos.x + dirx * distanceInWorldSpace - getWidth() /2 * deltax;
-            double spacey = pos.y + diry * distanceInWorldSpace - getHeight() /2 * deltay;
+            //these numbers calculate the position in the track in 3d mode
+            double spacex = pos.x + dirx * distanceInWorldSpace - (double) getWidth() /2 * deltax;
+            double spacey = pos.y + diry * distanceInWorldSpace - (double) getHeight() /2 * deltay;
 
             for(int screenx=0; screenx < getWidth(); screenx++) {
+                if (screenx == centerScreenX && screeny == targetScreenY) {
+                    HUD.lapLabel.setText("difference (x:" + ((int)spacex - (int)pos.x) + ", y:" + ((int)spacey - (int)pos.y) + ")");
+                }
+                diffx = ((int)spacex - (int)pos.x);
+                diffy = ((int)spacey - (int)pos.y);
                 setColor(grass.getPixel(((int) Math.abs(spacex % grass.getWidth())), (int) Math.abs(spacey % grass.getHeight())));
                 drawPixel(screenx, screeny);
 

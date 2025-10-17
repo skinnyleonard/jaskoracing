@@ -1,6 +1,5 @@
 package online;
 
-import com.badlogic.gdx.Net;
 import com.badlogic.gdx.math.Vector3;
 
 import java.io.IOException;
@@ -41,7 +40,7 @@ public class Client extends Thread{
 
     private void procesarMensaje(DatagramPacket packet) {
         String mensaje = (new String(packet.getData())).trim();
-//        System.out.println("mensaje: "+mensaje);
+        System.out.println("mensaje: "+mensaje);
 
         String[] parts = mensaje.split(";");
 
@@ -52,7 +51,13 @@ public class Client extends Thread{
                 this.ipServer = packet.getAddress();
                 break;
             case "updatePos":
-                netManager.updateSprites(new Vector3(Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Float.parseFloat(parts[3])));
+                netManager.updateSprites(parts[1]);
+                System.out.println("x:"+parts[1].split("%")[0]+
+                    " y:"+parts[1].split("%")[1]+
+                    " angle:"+parts[1].split("%")[2]);
+                break;
+            case "newCar":
+                netManager.createSpritePlayer(parts[1]);
                 break;
             case "serverfull":
                 this.netManager.connect(false);
