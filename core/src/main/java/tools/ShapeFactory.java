@@ -27,7 +27,7 @@ public class ShapeFactory {
 		return body;
 	}
 
-    public static Body createPlayer(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
+    public static Body createPlayer(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, boolean sensor, String carUser) {
         final BodyDef bdef = new BodyDef();
         bdef.position.set(position.x / Constants.PPM, position.y / Constants.PPM);
         bdef.type = type;
@@ -40,7 +40,7 @@ public class ShapeFactory {
         fdef.density = density;
         fdef.isSensor = sensor;
 
-        body.createFixture(fdef).setUserData("car");;
+        body.createFixture(fdef).setUserData(carUser);
         shape.dispose();
 
         return body;

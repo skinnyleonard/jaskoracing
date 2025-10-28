@@ -74,8 +74,10 @@ public class MapLoader implements Disposable {
                 String name = rObject.getName();
                 System.out.println(name + " cargado...");
                 maxCheck = Integer.parseInt(name.replaceAll("[^0-9]", ""));
-                HUD.checkLabel.setText(WorldContactListener.checkCount + " / " + MapLoader.maxCheck );
-                HUD.lapLabel.setText(WorldContactListener.lapCount + " / " + WorldContactListener.maxLap);
+                if(WorldContactListener.car != null) {
+                  //  HUD.checkLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck );
+                  //  HUD.lapLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][1] + " / " + WorldContactListener.maxLap);
+                }
                 float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];
 
@@ -108,20 +110,20 @@ public class MapLoader implements Disposable {
         }
     }
 
-    public Body placePlayer(float x, float y) {
+    public Body placePlayer(float x, float y, int user) {
         return ShapeFactory.createPlayer(
             new Vector2(x + (float) 128 / 2, y - (float) 256 / 2),
             new Vector2((float) 128 / 2, (float) 256 / 2),
-            BodyDef.BodyType.DynamicBody, mWorld, 0.4f, false);
+            BodyDef.BodyType.DynamicBody, mWorld, 0.4f, false, ("car"+user));
     }
 
-    public Body getPlayers() {
-        final Rectangle rectangle = mMap.getLayers().get(MAP_PLAYER).getObjects().getByType(RectangleMapObject.class).get(0).getRectangle();
-        return ShapeFactory.createPlayer(
-            new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2),
-            new Vector2(rectangle.getWidth() / 2, rectangle.getHeight() / 2),
-            BodyDef.BodyType.DynamicBody, mWorld, 0.4f, false);
-    }
+//    public Body getPlayers() {
+//        final Rectangle rectangle = mMap.getLayers().get(MAP_PLAYER).getObjects().getByType(RectangleMapObject.class).get(0).getRectangle();
+//        return ShapeFactory.createPlayer(
+//            new Vector2(rectangle.getX() + rectangle.getWidth() / 2, rectangle.getY() + rectangle.getHeight() / 2),
+//            new Vector2(rectangle.getWidth() / 2, rectangle.getHeight() / 2),
+//            BodyDef.BodyType.DynamicBody, mWorld, 0.4f, false);
+//    }
 
     @Override
     public void dispose() {
