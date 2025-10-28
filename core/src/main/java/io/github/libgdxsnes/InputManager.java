@@ -8,9 +8,11 @@ public class InputManager implements InputProcessor {
 
 
     private Client client;
+    private GameScreen gameScreen;
 
-    public InputManager(Client client){
+    public InputManager(Client client,  GameScreen gameScreen) {
         this.client = client;
+        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -20,8 +22,9 @@ public class InputManager implements InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        if((keycode == Input.Keys.UP) || (keycode == Input.Keys.DOWN)){
+        if((keycode == Input.Keys.UP) || (keycode == Input.Keys.DOWN) || (keycode == Input.Keys.LEFT) || (keycode == Input.Keys.RIGHT)){
             client.sendMessage("move$afk");
+            gameScreen.frameTimer = 0;
         }
         return false;
     }

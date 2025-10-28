@@ -17,10 +17,10 @@ public class HUD implements Disposable{
 
     private Integer score;
 
-    Label scoreLabel;
+    public static Label scoreLabel;
     public static Label debugLabel;
     public static Label checkLabel;
-    Label timeLabel;
+    public static Label timeLabel;
     public static Label lapLabel;
 
     public HUD(SpriteBatch sb) {
