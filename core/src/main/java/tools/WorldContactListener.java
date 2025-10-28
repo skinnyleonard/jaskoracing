@@ -41,7 +41,7 @@ public class WorldContactListener implements ContactListener{
                     checkCount = 1;
                     if (lapCount == maxLap){
                         Timer.stopTimer();
-                        System.out.println("Llegaste a la meta");
+                        System.out.println("llegaste a la meta");
                     }
                     lapCount = lapCount + 1;
                     HUD.checkLabel.setText(checkCount + " / " + MapLoader.maxCheck );

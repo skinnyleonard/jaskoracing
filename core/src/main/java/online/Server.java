@@ -5,15 +5,12 @@ import screens.PlayScreen;
 import tools.MapLoader;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 import java.util.ArrayList;
 
 public class Server extends Thread {
     public static int clientIndexed = 0;
-    private DatagramSocket socket;
+    public DatagramSocket socket;
     private int port = 5555;
     private boolean end = false;
     private final int MAX_CLIENTS = 2;
@@ -118,7 +115,7 @@ public class Server extends Thread {
 
         switch (parts[0]) {
             case "connect":
-                sendMessage("connected", packet.getAddress(), packet.getPort());
+                sendMessage("connected;"+connectedUsers, packet.getAddress(), packet.getPort());
                 this.connectedUsers++;
                 User newUser = new User("usuario"+connectedUsers, packet.getAddress(), packet.getPort());
                 this.users.add(newUser);

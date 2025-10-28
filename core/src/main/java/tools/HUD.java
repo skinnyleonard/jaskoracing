@@ -40,6 +40,10 @@ public class HUD implements Disposable{
         debugLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         checkLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         lapLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+
+        Timer contador = new Timer();
+        contador.start();
+
         table.add(checkLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);
         table.add(lapLabel).expandX().padTop(10);
@@ -48,9 +52,6 @@ public class HUD implements Disposable{
         table.add(debugLabel).expandX();
 
         stage.addActor(table);
-
-        Timer contador = new Timer();
-        contador.start();
     }
 
     @Override

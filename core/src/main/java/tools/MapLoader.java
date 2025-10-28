@@ -83,8 +83,6 @@ public class MapLoader implements Disposable {
                     worldVertices[i] = new Vector2();
                     worldVertices[i].x = vertices[i*2]/Constants.PPM;
                     worldVertices[i].y = vertices[i*2+1]/Constants.PPM;
-
-
                 }
                 ShapeFactory.createCheck(
                     worldVertices, BodyDef.BodyType.StaticBody, world, 1f, true, name
