@@ -14,6 +14,7 @@ public class WorldContactListener implements ContactListener{
     public static int maxLap = 3;
     public static int[][] jugadorCount = new int [8][2];
     public static String car;
+    public static String check;
     public WorldContactListener() {
         inicio();
 
@@ -36,7 +37,7 @@ public class WorldContactListener implements ContactListener{
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
 
-        String check = fixA.getUserData().toString();
+        check = String.valueOf(fixA.getUserData());
         car = String.valueOf(fixB.getUserData());
 
         if (check.contains(col) && car.contains(col2)) {
