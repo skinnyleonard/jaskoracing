@@ -272,12 +272,12 @@ public class PlayScreen implements Screen, NetManager {
             players.get(client).setDriveDirection(DRIVE_DIRECTION_FORWARD);
             players.get(client).imageIterationNumber = 1;
             players.get(client).flip = false;
-            System.out.println("se mueve up");
+          //  System.out.println("se mueve up");
         } else if(move.equals("down")) {
             players.get(client).setDriveDirection(DRIVE_DIRECTION_BACKWARD);
             players.get(client).imageIterationNumber = 1;
             players.get(client).flip = false;
-            System.out.println("se mueve down");
+          //  System.out.println("se mueve down");
         } else if(move.equals("afk")) {
             players.get(client).setDriveDirection(DRIVE_DIRECTION_NONE);
             players.get(client).imageIterationNumber = 1;
@@ -288,12 +288,12 @@ public class PlayScreen implements Screen, NetManager {
             players.get(client).setTurnDirection(TURN_DIRECTION_LEFT);
             players.get(client).imageIterationNumber = 3;
             players.get(client).flip = false;
-            System.out.println("se mueve left");
+           // System.out.println("se mueve left");
         } else if(move.equals("right")) {
             players.get(client).setTurnDirection(TURN_DIRECTION_RIGHT);
             players.get(client).imageIterationNumber = 3;
             players.get(client).flip = true;
-            System.out.println("se mueve right");
+           // System.out.println("se mueve right");
         } else if(move.equals("afk")) {
             players.get(client).setTurnDirection(TURN_DIRECTION_NONE);
             players.get(client).imageIterationNumber = 1;
@@ -306,7 +306,7 @@ public class PlayScreen implements Screen, NetManager {
         int arrPosition = mapLoader.positions.size() - (connectedUsers);
         float x = mapLoader.positions.get(arrPosition).getPoint().x;
         float y = mapLoader.positions.get(arrPosition).getPoint().y;
-        players.add(new Car(35.0f, 0.8f, 60, mapLoader, DRIVE_4WD, world, x, y));
+        players.add(new Car(35.0f, 0.8f, 60, mapLoader, DRIVE_4WD, world, x, y, connectedUsers));
         this.usersSprites.add("cars/"+carBrand+"/1.png");
     }
 

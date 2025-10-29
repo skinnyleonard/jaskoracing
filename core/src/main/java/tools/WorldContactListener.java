@@ -43,22 +43,22 @@ public class WorldContactListener implements ContactListener{
             if ( (fixA.getUserData() == (car) && fixB.getUserData() == (check) ||
                 (fixA.getUserData() == (check) && fixB.getUserData() == (car)))) {
 
-                if ((jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", "")) - 1][0]+1) == Integer.parseInt(check.replaceAll("[^0-9]", ""))){
-                    jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", "")) - 1][0] ++;
-                    System.out.println("Auto: " + Integer.parseInt ( car.replaceAll("[^0-9]", "") + " Check: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]+ " Vuelta: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][1]));
+                if ((jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", "")) ][0]+1) == Integer.parseInt(check.replaceAll("[^0-9]", ""))){
+                    jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", "")) ][0] ++;
+                    //System.out.println("Auto: " + Integer.parseInt ( car.replaceAll("[^0-9]", "") + " Check: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]+ " Vuelta: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][1]));
                    // HUD.checkLabel.setText(jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck );
-
+                    System.out.println("Auto: " + Integer.parseInt ( car.replaceAll("[^0-9]", "")) + " Check: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]+ " Vuelta: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][1]);
                 }
-                else if ((jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", "")) - 1][0]) == MapLoader.maxCheck && Integer.parseInt(check.replaceAll("[^0-9]", "")) == 1) {
+                else if ((jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]) == MapLoader.maxCheck && Integer.parseInt(check.replaceAll("[^0-9]", "")) == 1) {
 
-                    jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", "")) - 1][0] = 1;
+                    jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][0] = 1;
 
-                    if (jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", "")) - 1][1] == maxLap) {
+                    if (jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][1] == maxLap) {
                         Timer.stopTimer();
                         System.out.println("llegaste a la meta");
                     } else{
 
-                    jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))- 1][1] ++;
+                    jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][1] ++;
                    // HUD.checkLabel.setText(jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck);
                     //HUD.lapLabel.setText(jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][1] + " / " + maxLap);
                         System.out.println("Auto: " + Integer.parseInt ( car.replaceAll("[^0-9]", "")) + " Check: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]+ " Vuelta: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][1]);

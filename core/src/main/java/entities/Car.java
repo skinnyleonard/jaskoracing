@@ -46,9 +46,9 @@ public class Car extends BodyHolder {
     public int imageIterationNumber = 1;
     public boolean flip = false;
 
-    public Car(final float maxSpeed, final float drift, final float aceleration, final MapLoader  mapLoader, int wheelDrive, World world, float x, float y) {
+    public Car(final float maxSpeed, final float drift, final float aceleration, final MapLoader  mapLoader, int wheelDrive, World world, float x, float y, int user) {
 //        super(new Vector2(652/2, 2000/2), new Vector2(128/2, 256/2), BodyDef.BodyType.DynamicBody, world, 0.4f, false, 1);
-        super(mapLoader.placePlayer(x, y));
+        super(mapLoader.placePlayer(x, y, user));
         this.mRegularMaxSpeed = maxSpeed;
         this.drift = drift;
         this.aceleration = aceleration;
