@@ -109,7 +109,7 @@ public class Client extends Thread{
             }
         } catch (IOException e){
             String mensaje = (new String(packet.getData(), 0, packet.getLength())).trim();
-            System.out.println("mensaje: "+mensaje);
+//            System.out.println("mensaje: "+mensaje);
             String[] parts = mensaje.split(";");
 
             switch (parts[0]){
