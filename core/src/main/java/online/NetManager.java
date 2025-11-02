@@ -7,4 +7,6 @@ public interface NetManager {
     void placeNewPlayer(int connectedUsers);
     String getNewPlayerPos(int connectedUsers);
     String updateMetrics(int indexUser);
+
+    void deleteRacer(int index);
 }

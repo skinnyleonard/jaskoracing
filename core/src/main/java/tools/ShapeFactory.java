@@ -6,26 +6,26 @@ import com.badlogic.gdx.physics.box2d.*;
 import screens.Constants;
 
 public class ShapeFactory {
-	private ShapeFactory() {}
+    private ShapeFactory() {}
 
-	public static Body createRectangle(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
-		final BodyDef bdef = new BodyDef();
-		bdef.position.set(position.x / Constants.PPM, position.y / Constants.PPM);
-		bdef.type = type;
-		final Body body = world.createBody(bdef);
+    public static Body createRectangle(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, boolean sensor) {
+        final BodyDef bdef = new BodyDef();
+        bdef.position.set(position.x / Constants.PPM, position.y / Constants.PPM);
+        bdef.type = type;
+        final Body body = world.createBody(bdef);
 
-		final PolygonShape shape = new PolygonShape();
-		shape.setAsBox(size.x / Constants.PPM, size.y / Constants.PPM);
-		final FixtureDef fdef = new FixtureDef();
-		fdef.shape = shape;
-		fdef.density = density;
+        final PolygonShape shape = new PolygonShape();
+        shape.setAsBox(size.x / Constants.PPM, size.y / Constants.PPM);
+        final FixtureDef fdef = new FixtureDef();
+        fdef.shape = shape;
+        fdef.density = density;
         fdef.isSensor = sensor;
 
-		body.createFixture(fdef);
-		shape.dispose();
+        body.createFixture(fdef);
+        shape.dispose();
 
-		return body;
-	}
+        return body;
+    }
 
     public static Body createPlayer(final Vector2 position, final Vector2 size, final BodyDef.BodyType type, final World world, float density, boolean sensor, String carUser) {
         final BodyDef bdef = new BodyDef();
@@ -105,7 +105,4 @@ public class ShapeFactory {
 
         return body;
     }
-
-
 }
-

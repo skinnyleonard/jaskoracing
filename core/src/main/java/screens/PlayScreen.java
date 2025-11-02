@@ -8,15 +8,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.objects.PointMapObject;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import entities.Car;
+import entities.Wheel;
 import io.github.jasko.Main;
 import online.NetManager;
 import online.Server;
@@ -24,6 +22,8 @@ import online.User;
 import tools.HUD;
 import tools.MapLoader;
 import static entities.Car.*;
+
+import tools.Relationship;
 import tools.WorldContactListener;
 
 import java.io.ByteArrayOutputStream;
@@ -41,7 +41,7 @@ public class PlayScreen implements Screen, NetManager {
     private final Box2DDebugRenderer b2dr;
     private final OrthographicCamera camera;
     private final Viewport viewport;
-//    private final Car player;
+    //    private final Car player;
     public final MapLoader mapLoader;
     private static Main game;
     private HUD hud;
@@ -50,6 +50,7 @@ public class PlayScreen implements Screen, NetManager {
     private ArrayList<Car> players = new ArrayList<Car>();
     private ArrayList<String> usersSprites = new ArrayList<String>();
     private long lastMessageTime = -1;
+
 
     private int turnImage = 1;
     private final String carBrand = "quattro";
@@ -170,9 +171,79 @@ public class PlayScreen implements Screen, NetManager {
             float x =  player.get("x").asFloat();
             float y =  player.get("y").asFloat();
             String path = player.get("path").asString();
+            boolean flip = player.get("flip").asBoolean();
 
-//            System.out.println("id: " +id+", x: "+x+", y: "+y+", path: "+path);
+//            System.out.println("id: " +id+", x: "+x+", y: "+y+", path: "+path+", flip: "+flip);
         }
+    }
+
+    public void analizeCars() {
+        for(int i=0;i<players.size();i++) {
+            Body reference = players.get(i).getBody();
+
+            for(int j=0;j<players.size();j++) {
+                if(i == j) {
+                    continue;
+                }
+
+                Body other = players.get(j).getBody();
+                Relationship.RelationshipType rel = Relationship.classifyRelationship(reference, other);
+
+                System.out.println("auto "+i+" vs auto "+j+": "+rel);
+            }
+        }
+    }
+
+    private String andjsonforall(Car ref, int referenceId) {
+        StringWriter sw = new StringWriter();
+        JsonWriter writter = new JsonWriter(sw);
+        writter.setOutputType(JsonWriter.OutputType.json);
+
+        try{
+            writter.object();
+            writter.name("players").array();
+
+            for(int j=0;j<players.size();j++) {
+
+                Car otherCar = players.get(j);
+                Relationship.RelationshipType rel = Relationship.classifyRelationship(otherCar.getBody(), ref.getBody());
+
+                writter.object();
+                writter.name("id").value(j);
+                writter.name("x").value(Float.parseFloat(otherCar.getMetrics().split("%")[0]));
+                writter.name("y").value(Float.parseFloat(otherCar.getMetrics().split("%")[1]));
+
+                if (rel.equals(Relationship.RelationshipType.PERPENDICULAR_LEFT)) {
+                    writter.name("path").value("cars/" + carBrand + "/4.png");
+                    writter.name("flip").value(otherCar.flip);
+                } else if (rel.equals(Relationship.RelationshipType.PERPENDICULAR_RIGHT)) {
+                    writter.name("path").value("cars/" + carBrand + "/4.png");
+                    writter.name("flip").value(true);
+                } else if (rel.equals(Relationship.RelationshipType.PERPENDICULAR)) {
+                    writter.name("path").value("cars/" + carBrand + "/4.png");
+                    writter.name("flip").value(otherCar.flip);
+                } else if (rel.equals(Relationship.RelationshipType.CONFRONTED)) {
+                    writter.name("path").value("cars/" + carBrand + "/6.png");
+                    writter.name("flip").value(otherCar.flip);
+                } else if (rel.equals(Relationship.RelationshipType.NONE)) {
+                    writter.name("path").value("cars/" + carBrand + "/" + otherCar.imageIterationNumber + ".png");
+                    writter.name("flip").value(otherCar.flip);
+                }
+
+//                System.out.println("ref vs other: " + referenceId + " vs " + j);
+//                System.out.println("ref pos: " + ref.getBody().getPosition() + " angle: " + ref.getBody().getAngle());
+//                System.out.println("other pos: " + otherCar.getBody().getPosition() + " angle: " + otherCar.getBody().getAngle());
+//                System.out.println("rel: " + rel);
+
+                writter.pop();
+            }
+            writter.pop();
+            writter.pop();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return sw.toString();
     }
 
     private void draw() {
@@ -185,11 +256,11 @@ public class PlayScreen implements Screen, NetManager {
         for(Car car : players) {
             car.update(delta);
         }
-//        int i = 0;
-//        for(User user : server.users) {
-//            server.sendMessage("updatePos;"+players.get(i).getMetrics(), user.getIp(), user.getPort());
-//            i++;
+
+//        if(players.size() > 1) {
+//            analizeCars();
 //        }
+
         try{
             for(int i = 0; i<Math.min(server.users.size(), players.size()); i++) {
                 User user = server.users.get(i);
@@ -216,12 +287,16 @@ public class PlayScreen implements Screen, NetManager {
                     data, data.length, user.getIp(), user.getPort()
                 );
                 server.socket.send(packet);
+
+                String personalizedJson = andjsonforall(car, i);
+//                getJSON(personalizedJson);
+                server.sendMessage("updateOthersPos;"+personalizedJson, user.getIp(), user.getPort());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        this.server.pingEveryone("updateOthersPos;"+generatePositionsJSON());
+//        this.server.pingEveryone("updateOthersPos;"+generatePositionsJSON());
         camera.position.set(new Vector2(12800/2f, 6912/2f), 0);
         camera.setToOrtho(false, 640/Constants.PPM*3, 480/Constants.PPM*3);
         camera.update();
@@ -272,12 +347,12 @@ public class PlayScreen implements Screen, NetManager {
             players.get(client).setDriveDirection(DRIVE_DIRECTION_FORWARD);
             players.get(client).imageIterationNumber = 1;
             players.get(client).flip = false;
-          //  System.out.println("se mueve up");
+//            System.out.println("se mueve up");
         } else if(move.equals("down")) {
             players.get(client).setDriveDirection(DRIVE_DIRECTION_BACKWARD);
             players.get(client).imageIterationNumber = 1;
             players.get(client).flip = false;
-          //  System.out.println("se mueve down");
+//            System.out.println("se mueve down");
         } else if(move.equals("afk")) {
             players.get(client).setDriveDirection(DRIVE_DIRECTION_NONE);
             players.get(client).imageIterationNumber = 1;
@@ -288,12 +363,12 @@ public class PlayScreen implements Screen, NetManager {
             players.get(client).setTurnDirection(TURN_DIRECTION_LEFT);
             players.get(client).imageIterationNumber = 3;
             players.get(client).flip = false;
-           // System.out.println("se mueve left");
+//            System.out.println("se mueve left");
         } else if(move.equals("right")) {
             players.get(client).setTurnDirection(TURN_DIRECTION_RIGHT);
             players.get(client).imageIterationNumber = 3;
             players.get(client).flip = true;
-           // System.out.println("se mueve right");
+//            System.out.println("se mueve right");
         } else if(move.equals("afk")) {
             players.get(client).setTurnDirection(TURN_DIRECTION_NONE);
             players.get(client).imageIterationNumber = 1;
@@ -315,9 +390,24 @@ public class PlayScreen implements Screen, NetManager {
         return "newCar;"+generatePositionsJSON();
     }
 
-
     @Override
     public String updateMetrics(int indexUser) {
         return "updatePos;"+players.get(indexUser).getMetrics();
+    }
+
+    @Override
+    public void deleteRacer(int index) {
+        Body playerToDestroy = this.players.get(index).getBody();
+        Array<JointEdge> jointEdges = new Array<>(playerToDestroy.getJointList());
+        for(JointEdge edge : jointEdges) {
+            Joint joint = edge.joint;
+            world.destroyJoint(joint);
+        }
+
+        for(Wheel wheel : this.players.get(index).mAllWheels) {
+            world.destroyBody(wheel.getBody());
+        }
+        world.destroyBody(playerToDestroy);
+        this.players.remove(index);
     }
 }

@@ -37,7 +37,7 @@ public class Car extends BodyHolder {
     private int mTurnDirection = TURN_DIRECTION_NONE;
 
     private float mCurrentWheelAngle = 0;
-    private final Array<Wheel> mAllWheels = new Array<Wheel>();
+    public final Array<Wheel> mAllWheels = new Array<Wheel>();
     private final Array<Wheel> mRevolvingWheels = new Array<Wheel>();
     private float drift;
     private float mCurrentMaxSpeed;

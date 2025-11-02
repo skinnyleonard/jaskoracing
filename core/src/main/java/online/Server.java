@@ -57,7 +57,7 @@ public class Server extends Thread {
         }
     }
 
-//    private void processMessage(DatagramPacket packet) {
+    //    private void processMessage(DatagramPacket packet) {
 //        String message = (new String(packet.getData())).trim();
 //        System.out.println("Mensaje recibido: " + message);
 //        String[] parts = message.split("\\$");
@@ -127,6 +127,12 @@ public class Server extends Thread {
                 clientIndexed = searchUser(packet);
                 netManager.moveCar(parts[1], searchUser(packet));
 //                sendMessage(netManager.updateMetrics(searchUser(packet)),  packet.getAddress(), packet.getPort());
+                break;
+            case "disconnect":
+                int index = searchUser(packet);
+                this.users.remove(index);
+                netManager.deleteRacer(index);
+                this.connectedUsers--;
                 break;
         }
     }

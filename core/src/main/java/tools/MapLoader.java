@@ -75,8 +75,8 @@ public class MapLoader implements Disposable {
                 System.out.println(name + " cargado...");
                 maxCheck = Integer.parseInt(name.replaceAll("[^0-9]", ""));
                 if(WorldContactListener.car != null) {
-                  //  HUD.checkLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck );
-                  //  HUD.lapLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][1] + " / " + WorldContactListener.maxLap);
+                    //  HUD.checkLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck );
+                    //  HUD.lapLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][1] + " / " + WorldContactListener.maxLap);
                 }
                 float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];
