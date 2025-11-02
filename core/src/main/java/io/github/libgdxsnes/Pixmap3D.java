@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class Pixmap3D extends Pixmap {
         pixmapTex = new Texture(this, getFormat(), true);
         horizon = 40;
 //        bg = new Texture("bg.png");
-        bg = new Texture("anotherbg.png");
+        bg = new Texture("bg.png");
         grass = new Pixmap(Gdx.files.internal("grass.png"));
         track = new Pixmap(Gdx.files.internal("mapa.png"));
         pos = new Vector3(652, 2000, 140);

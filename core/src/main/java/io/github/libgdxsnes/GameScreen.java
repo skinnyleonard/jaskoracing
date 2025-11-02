@@ -1,21 +1,18 @@
 package io.github.libgdxsnes;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.StringBuilder;
-import com.badlogic.gdx.utils.TimeUtils;
 import online.Client;
 import online.NetManager;
 import java.text.DecimalFormat;
@@ -47,7 +44,7 @@ public class GameScreen extends ScreenAdapter implements NetManager {
     private int currentFrame = 0;
     public float frameTimer = 0f;
     private float frameDuration = 0.1f;
-    private final String carBrand = "renault5";
+    private final String carBrand = "rs1800";
     private Map<String, Pixmap> pixmapCache = new HashMap<>();
     private int myID;
 
@@ -157,13 +154,20 @@ public class GameScreen extends ScreenAdapter implements NetManager {
 //            client.sendMessage("move$afk");
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-            Vector2 screenPos = pixmap.projectToScreen(652, 2000, new Vector3(652, 2000, 140), 0, new Vector2(300, 300), 40, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            if (screenPos != null) {
-                System.err.println("screenPos: " + screenPos.x + ", " + screenPos.y);
-            } else {
-                System.err.println("No se pudo proyectar el punto.");
-            }
+//        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+//            Vector2 screenPos = pixmap.projectToScreen(652, 2000, new Vector3(652, 2000, 140), 0, new Vector2(300, 300), 40, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//            if (screenPos != null) {
+//                System.err.println("screenPos: " + screenPos.x + ", " + screenPos.y);
+//            } else {
+//                System.err.println("No se pudo proyectar el punto.");
+//            }
+//        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ALT_RIGHT)) {
+            this.client.sendMessage("disconnect");
+
+            //ESTA COSA SYSTEM.EXIT(0) ES MOMENTANEA HASTA ENCONTRAR ALGO MAS UTIL PARA SALIR DEL PROGRAMA
+            System.exit(0);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
@@ -188,10 +192,6 @@ public class GameScreen extends ScreenAdapter implements NetManager {
 //            client.sendMessage("move$afk");
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-            HUD.scoreLabel.setText(getStatusOfAll());
-        }
-
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             pixmap.angle -= TURN_ANGLE;
             pixmap.bgPos += 0.5f;
@@ -212,20 +212,11 @@ public class GameScreen extends ScreenAdapter implements NetManager {
         }
     }
 
-    private String getStatusOfAll() {
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        for(Sprite3D pixmap : pixmap.entities) {
-            sb.append("\n").append("ID: ").append(String.valueOf(pixmap.id)).append(" PATH:").append(pixmap.file.path()).append("\n");
-            i++;
-        }
-        return "ENTIDADES: "+i+sb.toString();
-    }
-
     @Override
     public void connect(boolean state, int id) {
         connected = state;
         myID = id;
+        HUD.timeLabel.setText("MI ID ES: "+myID);
     }
 
     @Override
@@ -266,6 +257,7 @@ public class GameScreen extends ScreenAdapter implements NetManager {
                         Sprite3D placeholder = new Sprite3D(invisiblePixmap, x, y, id);
                         placeholder.sort = Integer.MAX_VALUE;
                         pixmap.entities.add(placeholder);
+                        System.err.println("MI ID ES: "+myID);
                     }
 
                 }
@@ -288,6 +280,8 @@ public class GameScreen extends ScreenAdapter implements NetManager {
             String path = player.get("path").asString();
             boolean flip = player.get("flip").asBoolean();
 
+            System.out.println("MI ID ES: "+myID+"; MI CONTRICANTE ES: "+id+"; SU PATH ES: "+path+"; FLIP: "+flip);
+
             Sprite3D existing = null;
             for(Sprite3D sprite : pixmap.entities) {
                 if(sprite.id == id) {
@@ -298,7 +292,9 @@ public class GameScreen extends ScreenAdapter implements NetManager {
             if(existing != null) {
                 existing.position.set(x, y);
 //                safeReplacePixmap(existing, path);
-                existing.replacePixmap(path, pixmapCache, flip);
+                if(id != myID) {
+                    existing.replacePixmap(path, pixmapCache, flip);
+                }
             } else {
                 System.err.println("no existe el sprite");
             }
