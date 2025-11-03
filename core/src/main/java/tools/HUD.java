@@ -22,6 +22,7 @@ public class HUD implements Disposable{
     public static Label checkLabel;
     public static Label timeLabel;
     public static Label lapLabel;
+    public static Label leaderboard;
 
 
     public HUD(SpriteBatch sb) {
@@ -40,10 +41,12 @@ public class HUD implements Disposable{
         debugLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         checkLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         lapLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-
+        leaderboard = new Label("Cargando...", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         Timer contador = new Timer();
         contador.start();
 
+
+        table.add(leaderboard).expandX().padTop(10);
         table.add(checkLabel).expandX().padTop(10);
         table.add(timeLabel).expandX().padTop(10);
         table.add(lapLabel).expandX().padTop(10);

@@ -22,6 +22,7 @@ import online.User;
 import tools.HUD;
 import tools.MapLoader;
 import static entities.Car.*;
+import static tools.WorldContactListener.PosCheck;
 
 import tools.Relationship;
 import tools.WorldContactListener;
@@ -91,6 +92,7 @@ public class PlayScreen implements Screen, NetManager {
         update(delta);
         draw();
         hud.stage.draw();
+
     }
 
 //    private void handleInput() {
@@ -256,6 +258,8 @@ public class PlayScreen implements Screen, NetManager {
         for(Car car : players) {
             car.update(delta);
         }
+        WorldContactListener.PosCheck(players.size());
+
 
 //        if(players.size() > 1) {
 //            analizeCars();

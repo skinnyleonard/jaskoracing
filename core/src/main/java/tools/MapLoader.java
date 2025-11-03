@@ -23,7 +23,7 @@ public class MapLoader implements Disposable {
 
     private final World mWorld;
     private final TiledMap mMap;
-    public ArrayList<PointMapObject> positions = new ArrayList<PointMapObject>();
+    public static ArrayList<PointMapObject> positions = new ArrayList<PointMapObject>();
     public MapLoader(World world) {
         this.mWorld = world;
         mMap = new TmxMapLoader().load(Constants.MAP_NAME);

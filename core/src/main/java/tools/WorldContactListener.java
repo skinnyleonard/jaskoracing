@@ -5,6 +5,9 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import entities.Car;
+
+import java.util.ArrayList;
 
 public class WorldContactListener implements ContactListener{
 
@@ -72,7 +75,55 @@ public class WorldContactListener implements ContactListener{
         }
     }
 
-    @Override
+    public static void PosCheck (int totalPlayer) {
+
+        int[] pos = new int[8];
+
+        int j;
+        for (j = 0; j < totalPlayer; j++) {
+            int masLaps = -1;
+            int maxCheck = -1;
+            int elegido = -1;
+
+            for (int i = 0; i < totalPlayer; i++) {
+
+                boolean yaElegido = false;
+                for (int k = 0; k < j; k++) {
+                    if (pos[k] == i) {
+                        yaElegido = true;
+                    }
+                }
+                if (yaElegido) continue;
+
+                // Comparar vueltas y checkpoints
+                if (jugadorCount[i+1][1] > masLaps ||
+                    (jugadorCount[i+1][1] == masLaps && jugadorCount[i][0] > maxCheck)) {
+                    masLaps = jugadorCount[i+1][1];
+                    maxCheck = jugadorCount[i+1][0];
+                    elegido = i;
+                }
+            }
+            pos[j] = elegido;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (j = 0; j < totalPlayer; j++) {
+
+            System.out.println("Posicion: " + (j+1) + "Auto: " + pos[j] + "Vueltas: " + jugadorCount[pos[j]][1] + "Checkpoints: " + jugadorCount[pos[j]][0]);
+//            sb.append((j + 1)) // posición en el ranking (1°, 2°, 3°…)
+//                .append("° ID Auto: ").append(pos[j])
+//                .append(" - Vueltas: ").append(jugadorCount[pos[j]][1])
+//                .append(", Checkpoints: ").append(jugadorCount[pos[j]][0])
+//                .append("\n");
+
+            HUD.leaderboard.setText(sb.toString());
+            System.out.println(sb.toString());
+        }
+
+    }
+
+        @Override
     public void endContact(Contact contact) {
 
     }
