@@ -5,29 +5,22 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import entities.Car;
 
-import java.util.ArrayList;
-
-public class WorldContactListener implements ContactListener{
+public class WorldContactListener implements ContactListener {
 
     public static int lapCount = 1;
-    String col = "check";
-    String col2 = "car";
     public static int maxLap = 3;
-    public static int[][] jugadorCount = new int [8][2];
-    public static String car;
-    public static String check;
+    public static int[][] jugadorCount = new int[8][2];
+
     public WorldContactListener() {
         inicio();
-
         System.out.println(jugadorCount[0][0]);
         System.out.println(MapLoader.maxCheck);
     }
-    public void inicio()
-    {
+
+    public void inicio() {
         long time = System.currentTimeMillis();
-        if(time > 100){
+        if (time > 100) {
             for (int i = 0; i < jugadorCount.length; i++) {
                 jugadorCount[i][0] = 1; // checkpoint inicial
                 jugadorCount[i][1] = 1; // vuelta inicial
@@ -40,102 +33,99 @@ public class WorldContactListener implements ContactListener{
         Fixture fixA = contact.getFixtureA();
         Fixture fixB = contact.getFixtureB();
 
-        check = String.valueOf(fixA.getUserData());
-        car = String.valueOf(fixB.getUserData());
+        // Variables locales (no estáticas)
+        String a = String.valueOf(fixA.getUserData());
+        String b = String.valueOf(fixB.getUserData());
 
-        if (check.contains(col) && car.contains(col2)) {
-            if ( (fixA.getUserData() == (car) && fixB.getUserData() == (check) ||
-                (fixA.getUserData() == (check) && fixB.getUserData() == (car)))) {
+        String car = null;
+        String check = null;
 
-                if ((jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", "")) ][0]+1) == Integer.parseInt(check.replaceAll("[^0-9]", ""))){
-                    jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", "")) ][0] ++;
-                    //System.out.println("Auto: " + Integer.parseInt ( car.replaceAll("[^0-9]", "") + " Check: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]+ " Vuelta: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][1]));
-                    // HUD.checkLabel.setText(jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck );
-                    System.out.println("Auto: " + Integer.parseInt ( car.replaceAll("[^0-9]", "")) + " Check: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]+ " Vuelta: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][1]);
-                }
-                else if ((jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]) == MapLoader.maxCheck && Integer.parseInt(check.replaceAll("[^0-9]", "")) == 1) {
-
-                    jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][0] = 1;
-
-                    if (jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][1] == maxLap) {
-                        Timer.stopTimer();
-                        System.out.println("llegaste a la meta");
-                    } else{
-
-                        jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][1] ++;
-                        // HUD.checkLabel.setText(jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck);
-                        //HUD.lapLabel.setText(jugadorCount[Integer.parseInt(car.replaceAll("[^0-9]", ""))][1] + " / " + maxLap);
-                        System.out.println("Auto: " + Integer.parseInt ( car.replaceAll("[^0-9]", "")) + " Check: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][0]+ " Vuelta: " + jugadorCount [Integer.parseInt(car.replaceAll("[^0-9]", ""))][1]);
-                    }
-                }
-            }
+        // Detectar cuál es el auto y cuál el checkpoint
+        if (a.contains("car") && b.contains("check")) {
+            car = a;
+            check = b;
+        } else if (b.contains("car") && a.contains("check")) {
+            car = b;
+            check = a;
+        } else {
+            return; // No es contacto relevante
         }
-        else if ( (fixA.getUserData() == "car1" && fixB.getUserData() == ("pared") ||
-            (fixA.getUserData() == ("pared") && fixB.getUserData() == "car1"))) {
+
+        // Obtener índices correctos
+        int carIndex = Integer.parseInt(car.replaceAll("[^0-9]", "")) - 1; // 🔹 FIX principal
+        int checkIndex = Integer.parseInt(check.replaceAll("[^0-9]", ""));
+
+        // Validar índice dentro del rango
+        if (carIndex < 0 || carIndex >= jugadorCount.length) return;
+
+        // Pasó el siguiente checkpoint
+        if (jugadorCount[carIndex][0] + 1 == checkIndex) {
+            jugadorCount[carIndex][0]++;
+            System.out.println("Auto: " + carIndex + " Check: " + jugadorCount[carIndex][0] + " Vuelta: " + jugadorCount[carIndex][1]);
+        }
+        // Completó la vuelta
+        else if (jugadorCount[carIndex][0] == MapLoader.maxCheck && checkIndex == 1) {
+            jugadorCount[carIndex][0] = 1;
+
+            if (jugadorCount[carIndex][1] == maxLap) {
+                Timer.stopTimer();
+                System.out.println("Auto " + carIndex + " llegó a la meta!");
+            } else {
+                jugadorCount[carIndex][1]++;
+                System.out.println("Auto: " + carIndex + " reinicia vuelta -> Vuelta: " + jugadorCount[carIndex][1]);
+            }
         }
     }
 
-    public static void PosCheck (int totalPlayer) {
+    public static void PosCheck(int totalPlayer) {
+        int[] pos = new int[totalPlayer];
+        boolean[] yaElegido = new boolean[totalPlayer];
 
-        int[] pos = new int[8];
-
-        int j;
-        for (j = 0; j < totalPlayer; j++) {
+        for (int j = 0; j < totalPlayer; j++) {
+            int elegido = -1;
             int masLaps = -1;
             int maxCheck = -1;
-            int elegido = -1;
 
             for (int i = 0; i < totalPlayer; i++) {
+                if (yaElegido[i]) continue;
 
-                boolean yaElegido = false;
-                for (int k = 0; k < j; k++) {
-                    if (pos[k] == i) {
-                        yaElegido = true;
-                    }
-                }
-                if (yaElegido) continue;
+                int laps = jugadorCount[i][1];
+                int checks = jugadorCount[i][0];
 
-                // Comparar vueltas y checkpoints
-                if (jugadorCount[i+1][1] > masLaps ||
-                    (jugadorCount[i+1][1] == masLaps && jugadorCount[i][0] > maxCheck)) {
-                    masLaps = jugadorCount[i+1][1];
-                    maxCheck = jugadorCount[i+1][0];
+                if (laps > masLaps || (laps == masLaps && checks > maxCheck)) {
+                    masLaps = laps;
+                    maxCheck = checks;
                     elegido = i;
                 }
             }
+
             pos[j] = elegido;
+            yaElegido[elegido] = true;
         }
 
         StringBuilder sb = new StringBuilder();
+        for (int j = 0; j < totalPlayer; j++) {
+            sb.append((j + 1))
+                .append("° Auto: ").append(pos[j])
+                .append(" | Vueltas: ").append(jugadorCount[pos[j]][1])
+                .append(" | Checkpoints: ").append(jugadorCount[pos[j]][0])
+                .append("\n");
 
-        for (j = 0; j < totalPlayer; j++) {
-
-            System.out.println("Posicion: " + (j+1) + "Auto: " + pos[j] + "Vueltas: " + jugadorCount[pos[j]][1] + "Checkpoints: " + jugadorCount[pos[j]][0]);
-//            sb.append((j + 1)) // posición en el ranking (1°, 2°, 3°…)
-//                .append("° ID Auto: ").append(pos[j])
-//                .append(" - Vueltas: ").append(jugadorCount[pos[j]][1])
-//                .append(", Checkpoints: ").append(jugadorCount[pos[j]][0])
-//                .append("\n");
-
-            HUD.leaderboard.setText(sb.toString());
-            System.out.println(sb.toString());
+            System.out.println("Posición: " + (j + 1) +
+                " | Auto: " + pos[j] +
+                " | Vueltas: " + jugadorCount[pos[j]][1] +
+                " | Checkpoints: " + jugadorCount[pos[j]][0]);
         }
 
-    }
-
-        @Override
-    public void endContact(Contact contact) {
-
+        HUD.leaderboard.setText(sb.toString());
     }
 
     @Override
-    public void preSolve(Contact contact, Manifold oldManiFold) {
-
-    }
+    public void endContact(Contact contact) { }
 
     @Override
-    public void postSolve(Contact contact, ContactImpulse impulse) {
+    public void preSolve(Contact contact, Manifold oldManiFold) { }
 
-    }
-
+    @Override
+    public void postSolve(Contact contact, ContactImpulse impulse) { }
 }
