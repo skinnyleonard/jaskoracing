@@ -1,16 +1,12 @@
 package entities;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.PrismaticJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.Array;
-import screens.Constants;
-import sun.awt.PeerEvent;
-import tools.BodyHolder;
+import tools.Constants;
 import tools.MapLoader;
 import tools.Size;
 
@@ -45,22 +41,29 @@ public class Car extends BodyHolder {
     private float aceleration;
     public int imageIterationNumber = 1;
     public boolean flip = false;
+    public String carBrand = "";
 
-    public Car(final float maxSpeed, final float drift, final float aceleration, final MapLoader  mapLoader, int wheelDrive, World world, float x, float y, int user) {
-//        super(new Vector2(652/2, 2000/2), new Vector2(128/2, 256/2), BodyDef.BodyType.DynamicBody, world, 0.4f, false, 1);
+    public Car(final float maxSpeed, final float drift, final float aceleration, final MapLoader  mapLoader, int wheelDrive, World world, float x, float y, int user, String carBrand) {
         super(mapLoader.placePlayer(x, y, user));
+        this.carBrand = carBrand;
         this.mRegularMaxSpeed = maxSpeed;
         this.drift = drift;
         this.aceleration = aceleration;
         getBody().setLinearDamping(LINEAR_DAMPING);
         getBody().getFixtureList().get(0).setRestitution(RESTITUTION);
         createWheels(world, wheelDrive);
+        getBody().getFixtureList().get(0);
     }
 
     public String getMetrics() {
-        float x = getBody().getPosition().x*Constants.PPM;
+//        float width  = Size.getBodySize(getBody()).x * Constants.PPM;
+//        float height = Size.getBodySize(getBody()).y * Constants.PPM;
+//        float x = getBody().getPosition().x * Constants.PPM - width/2;
+//        float y = getBody().getPosition().y * Constants.PPM - height/2;
+
+        float x = getBody().getPosition().x*Constants.PPM-((Size.getBodySize(getBody()).x)*Constants.PPM)/2;
 //        float y =getBody().getPosition().y*Constants.PPM+((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2;
-        float y = getBody().getPosition().y*Constants.PPM-(Size.getBodySize(getBody()).y*Constants.PPM)/2;
+        float y = getBody().getPosition().y*Constants.PPM-((Size.getBodySize(getBody()).y))*Constants.PPM;
         float angle = getBody().getAngle();
         angle = (float)((angle % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI));
 

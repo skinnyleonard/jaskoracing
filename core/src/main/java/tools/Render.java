@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Render {
-    public static SpriteBatch batch = new SpriteBatch(); // inicializado
+    public static SpriteBatch batch = new SpriteBatch();
 
     public static void limpiarPantalla(float r, float g, float b) {
         Gdx.gl.glClearColor(r,g,b,1);
@@ -13,6 +13,6 @@ public class Render {
     }
 
     public static void dispose() {
-        batch.dispose(); // liberar recursos al cerrar
+        batch.dispose();
     }
 }

@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Disposable;
-import screens.Constants;
 import screens.PlayScreen;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public class MapLoader implements Disposable {
 
     private final World mWorld;
     private final TiledMap mMap;
-    public static ArrayList<PointMapObject> positions = new ArrayList<PointMapObject>();
+    public ArrayList<PointMapObject> positions = new ArrayList<PointMapObject>();
     public MapLoader(World world) {
         this.mWorld = world;
         mMap = new TmxMapLoader().load(Constants.MAP_NAME);
@@ -75,8 +74,8 @@ public class MapLoader implements Disposable {
                 System.out.println(name + " cargado...");
                 maxCheck = Integer.parseInt(name.replaceAll("[^0-9]", ""));
 
-                    //  HUD.checkLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck );
-                    //  HUD.lapLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][1] + " / " + WorldContactListener.maxLap);
+                //  HUD.checkLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][0] + " / " + MapLoader.maxCheck );
+                //  HUD.lapLabel.setText(WorldContactListener.jugadorCount [Integer.parseInt(WorldContactListener.car.replaceAll("[^0-9]", ""))][1] + " / " + WorldContactListener.maxLap);
 
                 float[] vertices = ((PolylineMapObject)rObject).getPolyline().getTransformedVertices();
                 Vector2[] worldVertices = new Vector2[vertices.length / 2];

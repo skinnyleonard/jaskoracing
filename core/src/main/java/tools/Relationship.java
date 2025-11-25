@@ -14,17 +14,13 @@ public class Relationship {
 
         Vector2 delta = b.getPosition().cpy().sub(a.getPosition()).nor();
 
-        float dotA = dirA.dot(delta);         // A mira hacia B
-        float dotB = dirB.dot(delta.cpy().scl(-1)); // B mira hacia A
-        float dotDirs = dirA.dot(dirB);       // orientación relativa
-
-//        boolean closeEnough = a.getPosition().dst(b.getPosition()) < 10f;
+        float dotA = dirA.dot(delta);
+        float dotB = dirB.dot(delta.cpy().scl(-1));
+        float dotDirs = dirA.dot(dirB);
 
         float angleA = dirA.angleDeg(delta);
         float angleB = dirB.angleDeg(delta.cpy().scl(-1));
         float angleBetween = dirA.angleDeg(dirB);
-
-//        System.out.println("dotA: "+dotA+" dotB: "+dotB);
 
         boolean aSeesB = angleA < 60f;
         boolean bSeesA = angleB < 60f;
@@ -40,13 +36,11 @@ public class Relationship {
 
             float side = delta.dot(lateral);
 
-//            System.out.println("side: "+side);
             if(side > 0) {
                 return RelationshipType.PERPENDICULAR_LEFT;
             } else {
                 return RelationshipType.PERPENDICULAR_RIGHT;
             }
-//            return RelationshipType.PERPENDICULAR;
         }
         return RelationshipType.NONE;
     }

@@ -1,5 +1,6 @@
 package online;
 
+import com.badlogic.gdx.math.Interpolation;
 import entities.Car;
 import screens.PlayScreen;
 import tools.MapLoader;
@@ -10,17 +11,14 @@ import java.util.ArrayList;
 
 public class Server extends Thread {
     public static int clientIndexed = 0;
-    public DatagramSocket socket;
+    public static DatagramSocket socket;
     private int port = 5555;
     private boolean end = false;
-    private final int MAX_CLIENTS = 2;
+    private final int MAX_CLIENTS = 1;
     private int connectedUsers = 0;
-    public ArrayList<User> users = new ArrayList<User>();
+    public static ArrayList<User> users = new ArrayList<User>();
     private NetManager netManager;
     public static String move = "";
-    private Car player;
-    private MapLoader mapLoader;
-    private PlayScreen playScreen;
 
     public Server(NetManager netManager) {
         this.netManager = netManager;
@@ -41,7 +39,6 @@ public class Server extends Thread {
         }));
         do {
             DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
-//            System.out.println("esperando mensajito, con cariño el servidor");
             try {
                 socket.receive(packet);
                 processMessage(packet);
@@ -57,76 +54,26 @@ public class Server extends Thread {
         }
     }
 
-    //    private void processMessage(DatagramPacket packet) {
-//        String message = (new String(packet.getData())).trim();
-//        System.out.println("Mensaje recibido: " + message);
-//        String[] parts = message.split("\\$");
-//
-//        int indexRemitter = searchUser(packet.getAddress(), packet.getPort());
-//        int indexReceiver = (indexRemitter == 0) ? 1 : 0;
-//
-//        if(parts[0].equals("connect")) {
-//            if(indexRemitter == -1) {
-//                sendMessage("alreadyConnected", packet.getAddress(), packet.getPort());
-//                System.out.println(("el usuario ya esta conectado"));
-//                return;
-//            }
-//            if(this.connectedUsers < this.MAX_CLIENTS) {
-//                this.sendMessage("connected", packet.getAddress(), packet.getPort());
-//                System.out.println("cliente conectado");
-//                User newUser = new User(parts[1], packet.getAddress(), packet.getPort());
-//                this.users.add(newUser);
-//                this.connectedUsers++;
-//            } else {
-//                this.sendMessage("serverfull",  packet.getAddress(), packet.getPort());
-//                System.out.println("servidor lleno");
-//            }
-//        } else if(parts[0].equals("disconnect")) {
-//            if(indexRemitter == -1) {
-//                if(this.connectedUsers > 1) {
-//                    this.sendMessage("usuario desconectado",this.users.get(indexReceiver).getIp(), this.users.get(indexReceiver).getPort());
-//                    this.connectedUsers--;
-//                    this.users.remove(indexRemitter);
-//                }
-//            }
-//        } else {
-//            if(indexRemitter == -1) {
-//                System.out.println("el usuario desconectado, no se puede procesar el mensaje");
-//                return;
-//            }
-//             if(this.connectedUsers < this.MAX_CLIENTS) {
-//                 this.sendMessage("waitingotheruser",  packet.getAddress(), packet.getPort());
-//                 System.out.println("esperando otro usuario");
-//                 return;
-//             }
-//
-//             switch (parts[0]) {
-//                 case "newmessage":
-//                     String messageChat = "mensajechat$" + this.users.get(indexRemitter).getUsername() + "dice: " + parts[1];
-//                     this.sendMessage(messageChat, this.users.get(indexReceiver).getIp(), this.users.get(indexReceiver).getPort());
-//                     break;
-//             }
-//        }
-//    }
     private void processMessage(DatagramPacket packet) {
         String message = (new String(packet.getData())).trim();
-//        System.out.println("Mensaje recibido: " + message);
         String[] parts = message.split("\\$");
 
         switch (parts[0]) {
             case "connect":
-                sendMessage("connected;"+connectedUsers, packet.getAddress(), packet.getPort());
-                this.connectedUsers++;
-                User newUser = new User("usuario"+connectedUsers, packet.getAddress(), packet.getPort());
-                this.users.add(newUser);
-                netManager.placeNewPlayer(connectedUsers);
-                this.pingEveryone(netManager.getNewPlayerPos(connectedUsers));
+                if(connectedUsers == MAX_CLIENTS) {
+                    sendMessage("serverfull", packet.getAddress(), packet.getPort());
+                } else {
+                    sendMessage("connected;"+connectedUsers, packet.getAddress(), packet.getPort());
+                    this.connectedUsers++;
+                    User newUser = new User(parts[2], packet.getAddress(), packet.getPort());
+                    this.users.add(newUser);
+                    netManager.placeNewPlayer(connectedUsers, parts[1]);
+                }
                 break;
             case "move":
                 move = parts[1];
                 clientIndexed = searchUser(packet);
                 netManager.moveCar(parts[1], searchUser(packet));
-//                sendMessage(netManager.updateMetrics(searchUser(packet)),  packet.getAddress(), packet.getPort());
                 break;
             case "disconnect":
                 int index = searchUser(packet);

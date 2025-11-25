@@ -1,9 +1,7 @@
 package io.github.jasko;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import screens.PantallaMenu;
 import screens.PlayScreen;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
