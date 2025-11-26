@@ -21,10 +21,10 @@ fondos/fondo2.jpg
 fondos/fondoJuego.png
 fuentes/moki.otf
 fuentes/sewer.ttf
-mapa.png
 mapa.tsx
 mapa_demo_final.tmx
 mapa_demo_final2p.tmx
+mapas/mapa.png
 new_map-copia.tmx
 new_map.tmx
 new_map2.tmx
