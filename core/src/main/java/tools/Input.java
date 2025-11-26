@@ -4,7 +4,7 @@ import com.badlogic.gdx.InputProcessor;
 import pantallas.MenuScreen;
 
 public class Input implements InputProcessor {
-    private boolean abajo = false, arriba = false;
+    private boolean down = false, up = false;
     private boolean enter = false;
     MenuScreen app;
 
@@ -12,23 +12,23 @@ public class Input implements InputProcessor {
         this.app = app;
     }
 
-    public boolean isAbajo(){ return abajo; }
-    public boolean isArriba(){ return arriba; }
+    public boolean isDown(){ return down; }
+    public boolean isUp(){ return up; }
     public boolean isEnter(){ return enter; }
 
     @Override
     public boolean keyDown(int keycode) {
         app.time = 0.05f;
-        if (keycode == com.badlogic.gdx.Input.Keys.DOWN) abajo = true;
-        if (keycode == com.badlogic.gdx.Input.Keys.UP)   arriba = true;
+        if (keycode == com.badlogic.gdx.Input.Keys.DOWN) down = true;
+        if (keycode == com.badlogic.gdx.Input.Keys.UP)   up = true;
         if (keycode == com.badlogic.gdx.Input.Keys.ENTER) enter = true;
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == com.badlogic.gdx.Input.Keys.DOWN) abajo = false;
-        if (keycode == com.badlogic.gdx.Input.Keys.UP)   arriba = false;
+        if (keycode == com.badlogic.gdx.Input.Keys.DOWN) down = false;
+        if (keycode == com.badlogic.gdx.Input.Keys.UP)   up = false;
         if (keycode == com.badlogic.gdx.Input.Keys.ENTER) enter = false;
         return false;
     }
