@@ -57,7 +57,9 @@ public class GameScreen extends ScreenAdapter implements NetManager {
     private ShapeRenderer shapeRenderer;
     private EndingScreen endingScreen;
     private int position = 1;
+    private String lap;
     private Viewport viewport;
+    private boolean disconnect;
 
     public GameScreen(Game game, SpriteBatch batch, String carBrand, String playerName) {
         this.game = game;
@@ -110,7 +112,6 @@ public class GameScreen extends ScreenAdapter implements NetManager {
             Pixmap orignal = new Pixmap(Gdx.files.internal("cars/"+carBrand+"/"+i+".png"));
             int scaledWidth = orignal.getWidth() / 10;
             int scaledHeight = orignal.getHeight() / 10;
-            System.out.println(i);
             Pixmap pixelated = new Pixmap(scaledWidth, scaledHeight, orignal.getFormat());
 
             for(int y = 0; y < scaledHeight; y++) {
@@ -131,6 +132,7 @@ public class GameScreen extends ScreenAdapter implements NetManager {
             posSprites.add(t);
         }
     }
+
     boolean sceneChanged = false;
     float fade = 0.0f;
     private void finishAnimation(float delta) {
@@ -142,7 +144,7 @@ public class GameScreen extends ScreenAdapter implements NetManager {
         if(frameTimer >= frameDuration && sceneChanged==false) {
             pixmap.entities.get(0).position.y -= 20f;
         }
-//        System.out.println(pixmap.entities.get(0).position.y);
+
         if(pixmap.entities.get(0).position.y <= 1600 && !sceneChanged) {
             sceneChanged = true;
             pixmap.angle = Math.toRadians(90);
@@ -162,9 +164,7 @@ public class GameScreen extends ScreenAdapter implements NetManager {
                     shapeRenderer.setColor(0,0,0,fade);
                     shapeRenderer.rect(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
                     shapeRenderer.end();
-                    System.out.println("fade: "+fade);
                     if(fade >= 2) {
-                        System.err.println("ACA TENDRIA QUE ENTRAR AL PUTISIMO ENDINGSCREEN");
                         endingScreen.passInfo(position, this);
                         game.setScreen(endingScreen);
                     }
@@ -180,6 +180,13 @@ public class GameScreen extends ScreenAdapter implements NetManager {
         batch.setProjectionMatrix(camera.combined);
         if(finished == false) {
             handleInput(delta);
+        }
+
+        if(disconnect == true) {
+            frameTimer += delta;
+            if(frameTimer >= 5) {
+                game.setScreen(new MenuScreen());
+            }
         }
         camera.update();
 
@@ -272,40 +279,31 @@ public class GameScreen extends ScreenAdapter implements NetManager {
 
     @Override
     public void connect(boolean state, int id) {
+        System.err.println("id: "+id+",myID: "+myID);
         if(id >= 0) {
             connected = state;
             myID = id;
             this.client.sendMessage("");
-            HUD.timeLabel.setText("MI ID ES: "+myID);
         } else if(id == -1) {
-            HUD.timeLabel.setText("El servidor esta lleno!");
+            HUD.notifLabel.setText("El servidor esta lleno!");
+            disconnect = true;
+        } else if(id == -2) {
+            HUD.notifLabel.setText("El servidor se apago");
+            disconnect = true;
         }
     }
 
     @Override
     public void updatePlayer(Vector3 position) {
         if(finished == false) {
-        Gdx.app.postRunnable(() -> {
-            if(!connected || pixmap.track == null) {
-                System.err.println("el track no se inicializo");
-                return;
-            }
-
+            Gdx.app.postRunnable(() -> {
+                if(!connected || pixmap.track == null) {
+                    return;
+                }
                 pixmap.pos.x = position.x;
                 pixmap.pos.y = pixmap.track.getHeight() - position.y;
                 pixmap.angle = -position.z - Math.toRadians(90);
-
-//ESTO LUEGO DESCOMENTARLO
-
-// ESTO DE ACA ABAJO ES CON FINES DE PRUEBA, CORREGIR MAS TARDE
-//            pixmap.pos.x = (position.x);
-//            pixmap.pos.y = (pixmap.track.getHeight() - position.y) + 550;
-//            //pixmap.angle = -position.z - Math.toRadians(90);
-//
-//            pixmap.testposx = position.x;
-//            pixmap.testposy = pixmap.track.getHeight() - position.y;
-//            pixmap.testangle = -position.z;
-        });
+            });
         }
     }
 
@@ -323,7 +321,7 @@ public class GameScreen extends ScreenAdapter implements NetManager {
                     float y =  pixmap.track.getHeight() - player.get("y").asFloat();
                     String path = player.get("path").asString();
 
-                    if(!(myID == id)) {
+                    if(myID != id) {
                         pixmap.entities.add(new Sprite3D(new Pixmap(Gdx.files.internal(path)), x, y, id));
                     } else {
                         Pixmap invisiblePixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -383,6 +381,8 @@ public class GameScreen extends ScreenAdapter implements NetManager {
                 index = i;
             }
         }
+        lap = grid.split("\\$")[index].split("\\|")[3].split(":")[1];
+        HUD.lapLabel.setText("Vueltas "+lap);
         position = Integer.parseInt(grid.split("\\$")[index].split("\\|")[0].split(":")[1]);
         posImage.setTexture(posSprites.get(position-1));
 
@@ -406,6 +406,19 @@ public class GameScreen extends ScreenAdapter implements NetManager {
             frameTimer = 0;
             fade = 0;
             finished = true;
+        }
+    }
+
+    @Override
+    public void deleteUser(String part) {
+        boolean founded = false;
+        int i = 0;
+        while(i < pixmap.entities.size() && !founded) {
+            if(pixmap.entities.get(i).id == Integer.parseInt(part)) {
+                pixmap.entities.remove(i);
+                founded = true;
+            }
+            i++;
         }
     }
 

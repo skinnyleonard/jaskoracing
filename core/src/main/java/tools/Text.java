@@ -28,9 +28,11 @@ public class Text {
     public void draw() {
         font.draw(Render.batch, text, x, y);
     }
+
     public void setColor(Color color){
         font.setColor(color);
     }
+
     public void setPosition(float x, float y){
         this.x=x;
         this.y=y;

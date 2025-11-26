@@ -68,8 +68,8 @@ public class CarSelectScreen implements Screen {
         bg.draw();
 
         Image currentImage = cars[carIndex];
-        float width = Gdx.graphics.getWidth() * 0.5f;
-        float height = Gdx.graphics.getHeight() * 0.5f;
+        float width = (currentImage.t.getWidth() /3);
+        float height = (currentImage.t.getHeight() /3);
         float x = (Gdx.graphics.getWidth() - width) / 2;
         float y = (Gdx.graphics.getHeight() - height) / 2;
 

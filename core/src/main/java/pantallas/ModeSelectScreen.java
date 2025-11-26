@@ -31,7 +31,7 @@ public class ModeSelectScreen implements Screen {
         b = Render.batch;
 
 
-        bg = new Image("fondos/bgOpciones.png");
+        bg = new Image("fondos/fondoOpciones.png");
         bg.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         int startX = Gdx.graphics.getWidth() / 2 - 300;

@@ -20,7 +20,6 @@ public class Client extends Thread{
     public Client(NetManager netManager){
         try{
             this.netManager = netManager;
-            System.out.println("cliente iniciado perrito");
             this.ipServer = InetAddress.getByName(this.stringServerIp);
             socket = new DatagramSocket();
         } catch (SocketException | UnknownHostException e) {
@@ -59,13 +58,11 @@ public class Client extends Thread{
             }
         } catch (IOException e){
             String mensaje = (new String(packet.getData(), 0, packet.getLength())).trim();
-//            System.out.println("mensaje: "+mensaje);
             String[] parts = mensaje.split(";");
 
             switch (parts[0]){
                 case "connected":
                     this.netManager.connect(true, Integer.valueOf(parts[1]));
-                    System.out.println("se conecto perfectamente");
                     this.ipServer = packet.getAddress();
                     break;
                 case "updateOthersPos":
@@ -73,7 +70,6 @@ public class Client extends Thread{
                     break;
                 case "newCar":
                     netManager.createSpritePlayer(parts[1]);
-                    System.out.println(parts[1]);
                     break;
                 case "updateGrid":
                     netManager.updateGrid(parts[1]);
@@ -87,11 +83,11 @@ public class Client extends Thread{
                     this.netManager.connect(false, -1);
                     break;
                 case "contricantdisconnected":
-                    System.out.println("el contricante se desconecto");
+                    netManager.deleteUser(parts[1]);
                     break;
                 case "serverClosed":
-                    netManager.connect(false, -1);
-                    System.out.println("el servidor se apago");
+                    netManager.connect(false, -2);
+                    finish();
                     break;
             }
         }

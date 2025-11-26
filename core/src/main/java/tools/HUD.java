@@ -17,18 +17,11 @@ public class HUD implements Disposable{
     public Stage stage;
     private Viewport viewport;
 
-    private Integer score;
-
-    public static Label scoreLabel;
-    public static Label debugLabel;
-    public static Label checkLabel;
-    public static Label timeLabel;
+    public static Label notifLabel;
     public static Label lapLabel;
     public static Label gridLabel;
 
     public HUD(SpriteBatch sb) {
-        score = 0;
-
         viewport = new ExtendViewport(640, 480, new OrthographicCamera());
         stage = new Stage(viewport, sb);
 
@@ -41,21 +34,12 @@ public class HUD implements Disposable{
         parameter.size = 18;
         BitmapFont font = generator.generateFont(parameter);
 
-        scoreLabel = new Label(String.format("%06d", score), new Label.LabelStyle(new BitmapFont(), Color.BLUE));
-        timeLabel = new Label("TIME", new Label.LabelStyle(new BitmapFont(), Color.BLUE));
-        debugLabel = new Label("1", new Label.LabelStyle(new BitmapFont(), Color.BLUE));
-        checkLabel = new Label("Cargando..." ,new Label.LabelStyle(new BitmapFont(), Color.BLUE));
-        lapLabel = new Label("lapLabel" ,new Label.LabelStyle(new BitmapFont(), Color.BLUE));
-        gridLabel = new Label(
-            "cargando posiciones" ,
-            new Label.LabelStyle(font, Color.WHITE));
+        notifLabel = new Label("", new Label.LabelStyle(new BitmapFont(), Color.BLUE));
+        lapLabel = new Label("lapLabel" ,new Label.LabelStyle(font, Color.YELLOW));
+        gridLabel = new Label("cargando posiciones" , new Label.LabelStyle(font, Color.WHITE));
 
-//        table.add(checkLabel).expandX().padTop(10);
-        table.add(timeLabel).expandX().padTop(10);
+        table.add(notifLabel).expandX().padTop(10);
         table.add(lapLabel).expandX().padTop(10);
-        table.row();
-//        table.add(scoreLabel).expandX();
-//        table.add(debugLabel).expandX();
         table.row();
         table.add(gridLabel).left().padLeft(10).padTop(50);
 

@@ -45,13 +45,10 @@ public class EndingScreen extends ScreenAdapter {
         camera.update();
         viewport = new FitViewport(GameScreen.GAME_WIDTH*3, GameScreen.GAME_HEIGHT*3, camera);
 
-//        this.sprite = new Sprite(new Texture(Gdx.files.internal("posiciones/8.png")));
-
         for(int i = 0; i < options.length; i++){
             options[i] = new Text("fuentes/speed.otf", 30, Color.WHITE);
             options[i].setText(optionStrings[i]);
             options[i].setPosition(startX+(i*gap),  (GameScreen.GAME_HEIGHT*3/4));
-            System.out.println(startX);
         }
     }
 
@@ -68,19 +65,16 @@ public class EndingScreen extends ScreenAdapter {
 
             options[i].draw();
         }
-
         batch.draw(sprite, ((GameScreen.GAME_WIDTH*3/2)-(sprite.getWidth()/2)), GameScreen.GAME_HEIGHT*3-sprite.getHeight()-50, sprite.getWidth(), sprite.getHeight());
         batch.end();
         tiempo += delta;
 
         if(Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.LEFT) && tiempo > 0.4f){
-            System.out.println(opc);
             tiempo = 0;
             opc++;
             if(opc > options.length-1) opc = 0;
         }
         if(Gdx.input.isKeyPressed(com.badlogic.gdx.Input.Keys.RIGHT) && tiempo > 0.4f){
-            System.out.println(opc);
             tiempo = 0;
             opc--;
             if(opc < 0) opc = options.length-1;

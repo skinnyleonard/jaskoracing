@@ -9,4 +9,5 @@ public interface NetManager {
     void updateOtherPos(String json);
     void updateGrid(String grid);
     void checkFinished(int id);
+    void deleteUser(String part);
 }
