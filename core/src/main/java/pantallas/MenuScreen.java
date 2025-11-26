@@ -62,12 +62,12 @@ public class MenuScreen implements Screen {
         time += delta;
 
 
-        if (input.isAbajo() && time > 0.09f) {
+        if (input.isDown() && time > 0.09f) {
             time = 0;
             opc++;
             if (opc > 3) opc = 0;
         }
-        if (input.isArriba() && time > 0.09f) {
+        if (input.isUp() && time > 0.09f) {
             time = 0;
             opc--;
             if (opc < 0) opc = 3;
