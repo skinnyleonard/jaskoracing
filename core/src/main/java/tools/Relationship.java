@@ -14,10 +14,6 @@ public class Relationship {
 
         Vector2 delta = b.getPosition().cpy().sub(a.getPosition()).nor();
 
-        float dotA = dirA.dot(delta);
-        float dotB = dirB.dot(delta.cpy().scl(-1));
-        float dotDirs = dirA.dot(dirB);
-
         float angleA = dirA.angleDeg(delta);
         float angleB = dirB.angleDeg(delta.cpy().scl(-1));
         float angleBetween = dirA.angleDeg(dirB);
@@ -32,7 +28,6 @@ public class Relationship {
 
         if (Math.abs(angleBetween - 90f) < 45f) {
             Vector2 lateral = new Vector2(dirA.y,dirA.x);
-            Vector2 u = b.getPosition().cpy().sub(a.getPosition());
 
             float side = delta.dot(lateral);
 
