@@ -5,13 +5,11 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import online.Server;
 import screens.PlayScreen;
 
 public class WorldContactListener implements ContactListener{
 
-    public static int lapCount = 1;
-    public static int maxLap = 1;
+    public static int maxLap = 2;
     public static int[][] playerCount = new int[8][2];
     private PlayScreen playScreen;
 
@@ -56,9 +54,7 @@ public class WorldContactListener implements ContactListener{
         int carIndex = Integer.parseInt(car.replaceAll("[^0-9]", "")) - 1;
         int checkIndex = Integer.parseInt(check.replaceAll("[^0-9]", ""));
 
-
         if (carIndex < 0 || carIndex >= playerCount.length) return;
-
 
         if (playerCount[carIndex][0] + 1 == checkIndex) {
             playerCount[carIndex][0]++;
@@ -110,8 +106,9 @@ public class WorldContactListener implements ContactListener{
         for (int j = 0; j < totalPlayer; j++) {
             sb.append("Pos: "+(j + 1))
                 .append(" | Auto: ").append(pos[j])
-                .append(" | "+Server.users.get(pos[j]).getUsername())
+                .append(" | "+ playScreen.server.users.get(pos[j]).getUsername())
                 .append(" | laps: ").append(playerCount[pos[j]][1])
+                .append("/"+maxLap)
                 .append(" | Checks: ").append(playerCount[pos[j]][0])
                 .append("$")
                 .append("\n");

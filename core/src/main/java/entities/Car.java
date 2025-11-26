@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.utils.Array;
 import tools.Constants;
 import tools.MapLoader;
-import tools.Size;
 
 public class Car extends BodyHolder {
     public static final int DRIVE_2WD = 0;
@@ -42,9 +41,12 @@ public class Car extends BodyHolder {
     public int imageIterationNumber = 1;
     public boolean flip = false;
     public String carBrand = "";
+    public int id;
 
     public Car(final float maxSpeed, final float drift, final float aceleration, final MapLoader  mapLoader, int wheelDrive, World world, float x, float y, int user, String carBrand) {
-        super(mapLoader.placePlayer(x, y, user));
+        super(mapLoader.placePlayer(x, y, user+1));
+        this.id = user;
+        System.out.println(id);
         this.carBrand = carBrand;
         this.mRegularMaxSpeed = maxSpeed;
         this.drift = drift;
@@ -56,14 +58,8 @@ public class Car extends BodyHolder {
     }
 
     public String getMetrics() {
-//        float width  = Size.getBodySize(getBody()).x * Constants.PPM;
-//        float height = Size.getBodySize(getBody()).y * Constants.PPM;
-//        float x = getBody().getPosition().x * Constants.PPM - width/2;
-//        float y = getBody().getPosition().y * Constants.PPM - height/2;
-
-        float x = getBody().getPosition().x*Constants.PPM-((Size.getBodySize(getBody()).x)*Constants.PPM)/2;
-//        float y =getBody().getPosition().y*Constants.PPM+((Size.getBodySize(getBody()).y*2)*Constants.PPM)/2;
-        float y = getBody().getPosition().y*Constants.PPM-((Size.getBodySize(getBody()).y))*Constants.PPM;
+        float x = getBody().getPosition().x*Constants.PPM;
+        float y = getBody().getPosition().y*Constants.PPM;
         float angle = getBody().getAngle();
         angle = (float)((angle % (2 * Math.PI) + (2 * Math.PI)) % (2 * Math.PI));
 

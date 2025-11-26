@@ -1,108 +1,109 @@
 package screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import tools.*;
+import com.badlogic.gdx.graphics.Color;
+import io.github.jasko.Main;
+import tools.Constants;
+import tools.Image;
+import tools.Text;
+import tools.Render;
 
 public class MenuScreen implements Screen {
-    private static Game game;
-    public OrthographicCamera gamecam;
 
-    Image bg;
-    SpriteBatch b;
+    private Main game;
+    private SpriteBatch b;
 
-    Text[] opciones = new Text[4];
-    String[] textos = {" Jugar", "Online", "Opciones", "Salir"};
+    private Image[] maps;
+    private int mapIndex = 0;
 
-    int opc = 0;
+    private String[] categories = {"F1", "Rally", "Drift"};
+    private int catIndex = 0;
+    private Text categoryText;
     public float time = 0;
-    private final Viewport viewport;
 
-    InputManager inputManager = new InputManager(this);
-
-    public MenuScreen(Game game) {
+    public MenuScreen(Main game) {
         this.game = game;
-        viewport = new ExtendViewport(640, 480, new OrthographicCamera());
     }
 
     @Override
     public void show() {
-        bg = new Image(Constants.MENUBG);
-        bg.setSize((float)Gdx.graphics.getWidth()/2, (float)Gdx.graphics.getHeight()/2);
         b = Render.batch;
-        Gdx.input.setInputProcessor(inputManager);
 
-        int startY = 400;
-        int gap = 90;
-        for (int i = 0; i < opciones.length; i++) {
-            opciones[i] = new Text(Constants.FUENTEMENU, 50, Color.WHITE);
-            opciones[i].setTexto(textos[i]);
-            opciones[i].setPosition(Gdx.graphics.getHeight()/2, startY - (i * gap));
-        }
+        maps = new Image[] {
+            new Image("mapas/mapa.png"),
+        };
+
+        categoryText = new Text(Constants.MENUFONT, 50, Color.WHITE);
     }
 
     @Override
     public void render(float delta) {
-
-        bg.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-        b.begin();
-        bg.draw();
-        for (int i = 0; i < opciones.length; i++) {
-            opciones[i].dibujar();
-        }
-        b.end();
-
         time += delta;
 
-        if (inputManager.isAbajo()) {
-            if (time > 0.09f) {
+        Render.cleanScreen(0, 0, 0);
+        b.begin();
+
+        Image currentMap = maps[mapIndex];
+
+        currentMap.setSize(
+            Gdx.graphics.getWidth() * 0.35f,
+            Gdx.graphics.getHeight() * 0.45f
+        );
+
+        currentMap.setPosition(
+            Gdx.graphics.getWidth() * 0.10f,
+            (Gdx.graphics.getHeight() - currentMap.getHeight()) / 2
+        );
+
+        currentMap.draw();
+
+
+        categoryText.setTexto("" + categories[catIndex]);
+        categoryText.setPosition(
+            (int)(Gdx.graphics.getWidth() * 0.60f),
+            Gdx.graphics.getHeight() / 2
+        );
+        categoryText.dibujar();
+
+        b.end();
+
+
+        if (time > 0.20f) {
+
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                mapIndex = (mapIndex - 1 + maps.length) % maps.length;
                 time = 0;
-                opc++;
-                if (opc > 3) opc = 0;
             }
-        }
-        if (inputManager.isArriba()) {
-            if (time > 0.09f) {
+
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                mapIndex = (mapIndex + 1) % maps.length;
                 time = 0;
-                opc--;
-                if (opc < 0) opc = 3;
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+                catIndex = (catIndex - 1 + categories.length) % categories.length;
+                time = 0;
+            }
+
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                catIndex = (catIndex + 1) % categories.length;
+                time = 0;
             }
         }
 
-        for (int i = 0; i < opciones.length; i++) {
-            if (i == opc) {
-                opciones[i].setColor(Color.RED);
-            } else {
-                opciones[i].setColor(Color.WHITE);
-            }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            game.setScreen(new PlayScreen(categories[catIndex]));
         }
 
-        if (inputManager.isEnter()) {
-            if (opc == 0) {
-                game.setScreen(new PlayScreen());
-            } else if (opc == 1) {
-                System.out.println("Llamar al juego online");
-            } else if (opc == 2) {
-                System.out.println("Llamar a opciones");
-            } else if (opc == 3) {
-                System.out.println("Salir del juego");
-                Gdx.app.exit();
-            }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            game.setScreen(new MenuScreen(game));
         }
     }
 
-    @Override
-    public void resize(int width, int height) {
-        bg.setSize(width, height);
-    }
-
+    @Override public void resize(int width, int height) {}
     @Override public void pause() {}
     @Override public void resume() {}
     @Override public void hide() {}

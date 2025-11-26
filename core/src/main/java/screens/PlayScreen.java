@@ -38,8 +38,9 @@ public class PlayScreen implements Screen, NetManager {
     public Server server;
     private ArrayList<Car> players = new ArrayList<Car>();
     private WorldContactListener wcl;
+    private float drift;
 
-    public PlayScreen() {
+    public PlayScreen(String category) {
         batch = new SpriteBatch();
         world = new World(Constants.GRAVITY, true);
         b2dr = new Box2DDebugRenderer();
@@ -50,22 +51,22 @@ public class PlayScreen implements Screen, NetManager {
         mapLoader = new MapLoader(world);
         wcl = new WorldContactListener(this);
         world.setContactListener(wcl);
+        drift = (category == "F1") ? 0 : 0.8f;
     }
 
     @Override
     public void show() {
         this.server = new Server(this);
         this.server.start();
+        System.out.println(drift);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        if(players.isEmpty()) {
-            System.out.println("no hay jugadores");
-        } else {
-            moveCar(Server.move, Server.clientIndexed);
+        if(!players.isEmpty()){
+            moveCar(server.move, server.clientIndexed);
         }
         update(delta);
         draw();
@@ -84,7 +85,7 @@ public class PlayScreen implements Screen, NetManager {
             int i=0;
             for(Car car : players) {
                 writter.object();
-                writter.name("id").value(i);
+                writter.name("id").value(car.id);
                 writter.name("x").value(Float.parseFloat(car.getMetrics().split("%")[0]));
                 writter.name("y").value(Float.parseFloat(car.getMetrics().split("%")[1]));
                 writter.name("path").value("cars/"+car.carBrand+"/"+car.imageIterationNumber+".png");
@@ -116,7 +117,7 @@ public class PlayScreen implements Screen, NetManager {
                 Relationship.RelationshipType rel = Relationship.classifyRelationship(otherCar.getBody(), ref.getBody());
 
                 writter.object();
-                writter.name("id").value(j);
+                writter.name("id").value(otherCar.id);
                 writter.name("x").value(Float.parseFloat(otherCar.getMetrics().split("%")[0]));
                 writter.name("y").value(Float.parseFloat(otherCar.getMetrics().split("%")[1]));
 
@@ -220,6 +221,7 @@ public class PlayScreen implements Screen, NetManager {
 
     @Override
     public void dispose() {
+        this.server.finish();
         batch.dispose();
         world.dispose();
         b2dr.dispose();
@@ -233,32 +235,34 @@ public class PlayScreen implements Screen, NetManager {
 
     @Override
     public void moveCar(String move, int client) {
-        if(move.equals("up")) {
-            players.get(client).setDriveDirection(DRIVE_DIRECTION_FORWARD);
-            players.get(client).imageIterationNumber = 1;
-            players.get(client).flip = false;
-        } else if(move.equals("down")) {
-            players.get(client).setDriveDirection(DRIVE_DIRECTION_BACKWARD);
-            players.get(client).imageIterationNumber = 1;
-            players.get(client).flip = false;
-        } else if(move.equals("afk")) {
-            players.get(client).setDriveDirection(DRIVE_DIRECTION_NONE);
-            players.get(client).imageIterationNumber = 1;
-            players.get(client).flip = false;
-        }
+        if(server.clientIndexed != -1) {
+            if(move.equals("up")) {
+                players.get(client).setDriveDirection(DRIVE_DIRECTION_FORWARD);
+                players.get(client).imageIterationNumber = 1;
+                players.get(client).flip = false;
+            } else if(move.equals("down")) {
+                players.get(client).setDriveDirection(DRIVE_DIRECTION_BACKWARD);
+                players.get(client).imageIterationNumber = 1;
+                players.get(client).flip = false;
+            } else if(move.equals("afk")) {
+                players.get(client).setDriveDirection(DRIVE_DIRECTION_NONE);
+                players.get(client).imageIterationNumber = 1;
+                players.get(client).flip = false;
+            }
 
-        if(move.equals("left")) {
-            players.get(client).setTurnDirection(TURN_DIRECTION_LEFT);
-            players.get(client).imageIterationNumber = 3;
-            players.get(client).flip = false;
-        } else if(move.equals("right")) {
-            players.get(client).setTurnDirection(TURN_DIRECTION_RIGHT);
-            players.get(client).imageIterationNumber = 3;
-            players.get(client).flip = true;
-        } else if(move.equals("afk")) {
-            players.get(client).setTurnDirection(TURN_DIRECTION_NONE);
-            players.get(client).imageIterationNumber = 1;
-            players.get(client).flip = false;
+            if(move.equals("left")) {
+                players.get(client).setTurnDirection(TURN_DIRECTION_LEFT);
+                players.get(client).imageIterationNumber = 3;
+                players.get(client).flip = false;
+            } else if(move.equals("right")) {
+                players.get(client).setTurnDirection(TURN_DIRECTION_RIGHT);
+                players.get(client).imageIterationNumber = 3;
+                players.get(client).flip = true;
+            } else if(move.equals("afk")) {
+                players.get(client).setTurnDirection(TURN_DIRECTION_NONE);
+                players.get(client).imageIterationNumber = 1;
+                players.get(client).flip = false;
+            }
         }
     }
 
@@ -267,9 +271,11 @@ public class PlayScreen implements Screen, NetManager {
         int arrPosition = mapLoader.positions.size() - (connectedUsers);
         float x = mapLoader.positions.get(arrPosition).getPoint().x;
         float y = mapLoader.positions.get(arrPosition).getPoint().y;
-        players.add(new Car(35.0f, 0.8f, 60, mapLoader, DRIVE_4WD, world, x, y, connectedUsers, carBrand));
+        players.add(new Car(35.0f, drift, 60, mapLoader, DRIVE_4WD, world, x, y, connectedUsers-1, carBrand));
         this.server.pingEveryone("newCar;"+generatePositionsJSON());
     }
+
+
 
     @Override
     public void deleteRacer(int index) {
@@ -284,7 +290,10 @@ public class PlayScreen implements Screen, NetManager {
             world.destroyBody(wheel.getBody());
         }
         world.destroyBody(playerToDestroy);
+        this.server.pingEveryone("contricantdisconnected;"+players.get(index).id);
         this.players.remove(index);
+
+        server.clientIndexed = -1;
 
         wcl.removeCar(index);
     }

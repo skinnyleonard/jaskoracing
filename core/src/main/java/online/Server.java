@@ -10,15 +10,15 @@ import java.net.*;
 import java.util.ArrayList;
 
 public class Server extends Thread {
-    public static int clientIndexed = 0;
     public static DatagramSocket socket;
     private int port = 5555;
     private boolean end = false;
-    private final int MAX_CLIENTS = 1;
+    private final int MAX_CLIENTS = 8;
     private int connectedUsers = 0;
     public static ArrayList<User> users = new ArrayList<User>();
     private NetManager netManager;
-    public static String move = "";
+    public String move = "";
+    public int clientIndexed = 0;
 
     public Server(NetManager netManager) {
         this.netManager = netManager;
@@ -56,18 +56,19 @@ public class Server extends Thread {
 
     private void processMessage(DatagramPacket packet) {
         String message = (new String(packet.getData())).trim();
+//        System.out.println(message);
         String[] parts = message.split("\\$");
 
         switch (parts[0]) {
             case "connect":
-                if(connectedUsers == MAX_CLIENTS) {
+                if(users.size() >= MAX_CLIENTS) {
                     sendMessage("serverfull", packet.getAddress(), packet.getPort());
                 } else {
-                    sendMessage("connected;"+connectedUsers, packet.getAddress(), packet.getPort());
-                    this.connectedUsers++;
-                    User newUser = new User(parts[2], packet.getAddress(), packet.getPort());
-                    this.users.add(newUser);
-                    netManager.placeNewPlayer(connectedUsers, parts[1]);
+                sendMessage("connected;"+connectedUsers, packet.getAddress(), packet.getPort());
+                this.connectedUsers++;
+                User newUser = new User(parts[2], packet.getAddress(), packet.getPort());
+                users.add(newUser);
+                netManager.placeNewPlayer(connectedUsers, parts[1]);
                 }
                 break;
             case "move":
@@ -77,7 +78,7 @@ public class Server extends Thread {
                 break;
             case "disconnect":
                 int index = searchUser(packet);
-                this.users.remove(index);
+                users.remove(index);
                 netManager.deleteRacer(index);
                 this.connectedUsers--;
                 break;
@@ -106,5 +107,13 @@ public class Server extends Thread {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void finish() {
+        System.out.println("me voy a la mierda");
+        pingEveryone("serverClosed");
+        this.end = true;
+        socket.close();
+        this.interrupt();
     }
 }

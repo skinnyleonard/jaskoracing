@@ -12,5 +12,5 @@ public class Constants {
     public static final String MAP_NAME = "mapa_demo_final.tmx";
 
     public static final String MENUBG = "fondos/fondo.jpg";
-    public static final String FUENTEMENU = "fuentes/moki.otf";
+    public static final String MENUFONT = "fuentes/moki.otf";
 }
